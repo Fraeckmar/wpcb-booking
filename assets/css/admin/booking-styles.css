@@ -1,0 +1,135 @@
+/* Advance Table */
+.advanced-table .table {
+    background-color: #fff;
+    border: none;
+    box-shadow: 0 0 6px #b5b5b5;
+}
+.advanced-table .table thead {
+    background-color: #33d298 ;
+    color: #fff;
+}
+.advanced-table .table tbody,
+.advanced-table .table thead{
+    border: none !important; 
+}
+.advanced-table .table tbody tr:last-child {
+    border-bottom: none;
+}
+.advanced-table .table tbody tr:hover {
+    box-shadow: 0 0 3px 1px #33d298;
+}
+#booking-list span.status {
+    background-color: #eaeaed;
+    padding: 3px 10px;
+    border-radius: 3px;
+}
+
+/* Menus */
+.wpcb-navigation .btn {
+    background-color: #ddd !important;
+}
+.wpcb-navigation .btn.active {
+    background-color: #f8f9fa !important;
+    border-color: #f8f9fa !important;
+}
+#wpcb-content {
+    background-color: #f8f9fa;
+}
+.tab-container {
+    display: none;
+}
+.tab-container.active {
+    display: block;
+}
+/* Submenus */
+.wpcb-sub-container .sub-menus .btn {
+    border: 1px solid #ddd !important;
+    color: #000;
+}
+.wpcb-sub-container .sub-menus .btn.active {
+    color: #000 !important;
+}
+.wpcb-sub-container .sub-menus .btn.focus {
+    box-shadow: none !important;
+}
+.wpcb-sub-content:not(.active) {
+    display: none;
+}
+
+/* Calendar Post type*/
+#calendar-post .calendar .days .day_num,
+#calendar-post .calendar .days .day_name {
+    height: 80px;
+    width: calc(100%/7);
+}
+#calendar-post .calendar .days .day_num span,
+#calendar-post .calendar .days .day_name {
+    font-size: 18px;
+}
+.calendar .days .day_num:not(.ignore) {
+    background-color: #d8fcde;
+}
+.calendar .days .day_num:not(.ignore) {
+    border: 1px solid #fff;
+}
+body.modal-open {
+    overflow: visible;
+}
+.wpcb-booking .calendar {
+    width: 100%;
+}
+
+/* Calendar LIst */
+.wpcb-booking .table tbody,
+.wpcb-booking .table thead{
+    border: 1px solid #cecece;
+}
+
+/* Manage Booking */
+#booking-list .booked-date {
+    padding: 2px 4px;
+    border-radius: 5px;
+    margin: 2px;
+}
+#booking-post .calendar .days .day_num.booked .booked-status {
+    background-color: #379aff;
+    color: #fff;
+    font-size: 4px;
+    padding: 0 2px;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 15px;
+    height: 15px;
+    text-align: center;
+}
+#booking-post .calendar .days .day_num {
+    height: 35px;
+}
+#booking-post .calendar .days .day_num.booked .booked-status .fa {
+    font-size: 9px;
+}
+#booking-post #wpcb-booking-admin-form #month-year {
+    font-size: 24px;
+    margin: 0 15px !important;
+}
+#booking-post #wpcb-booking-admin-form .calendar-header {
+    padding: 5px;
+}
+
+/* Settings */
+.wpcb-booking .selectize-control.single .selectize-input {
+    border: 1px solid #ddd !important;
+}
+.wpcb-booking .custom-select.selectize {
+    line-height: inherit;
+}
+#shortcode-list .shortcode {
+    background-color: #dde1e5;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+#shortcode-list thead tr {
+    background-color: #ddd;
+}

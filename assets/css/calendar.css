@@ -1,0 +1,259 @@
+/* Spinner */
+.wpcb-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #ffffff70;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+}
+.wpcb-loading .spinner-grow {
+    margin-top: 40%;
+    width: 2.2rem;
+    height: 2.2rem;
+}
+
+/* Animation */
+.scale-preset {
+    transform: scale(0);
+    transition: all .3s;
+}
+  
+.animate-scale {
+    transform: scale(1);
+}
+
+/* Notification */
+.wpcb-notif {
+    position: fixed !important;
+    top: 50px;
+    right: 10px;
+    z-index: 9999;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+/* Calendar */
+.calendar {
+    width: var(--calendar-width);
+    display: flex;
+    flex-flow: column;
+}
+.calendar .header .month-year {
+    font-size: 20px;
+    font-weight: bold;
+    color: #636e73;
+    padding: 20px 0;
+}
+.calendar .days {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+}
+.calendar .days .day_name {
+    padding: 10px 2px;
+    text-transform: uppercase;
+    font-size: var(--date-name-fsize);
+    font-weight: bold;
+    color: #33d298;
+}
+.calendar .days .day_num {
+    height: var(--date-height);
+    font-size: var(--date-nos-fsize);
+}
+.calendar .days .day_name,
+.calendar .days .day_num {
+    width: calc(var(--date-width));
+    border-bottom: 1px solid #fff;
+    text-align: center;
+    position: relative;
+}
+.calendar .days .day_num {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #7c878d;
+    cursor: pointer;
+    border-right: 1px solid #fff;
+}
+.day_num.ignore {
+    pointer-events:none;
+}
+.calendar .day_num.selected {
+    background-color: #33d298 !important;
+    color: #fff;
+}
+.calendar .days .day_num.available {
+    background-color: #d8fcde;
+}
+.calendar .days .day_num.unavailable,
+.calendar .days .day_num.booked,
+.calendar .days .day_num.disabled {
+    background-color: #ffccc9;
+}
+#calendar-post .calendar .days .day_num.booked .booked-status,
+#booking-info .calendar .days .day_num.booked .booked-status {
+    background-color: #379aff;
+    color: #fff;
+    font-size: 12px;
+    padding: 0 4px;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+.calendar .days .day_num.booked .booked-status .fa {
+    font-size: 12px;
+}
+.calendar .days .day_num .event {
+    margin-top: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background-color: #f7c30d;
+    color: #fff;
+    word-wrap: break-word;
+}
+.calendar .days .day_num .event.green {
+    background-color: #51ce57;
+}
+.calendar .days .day_num .event.blue {
+    background-color: #518fce;
+}
+.calendar .days .day_num .event.red {
+    background-color: #ce5151;
+}
+.calendar .days .day_num:nth-child(7n+1) {
+    border-left: 1px solid #e6e9ea;
+}
+.calendar .days .day_num.ignore {
+    color: #cecece;
+}
+body:not(.wp-admin) .calendar .days .day_num.ignore,
+body:not(.wp-admin) .calendar .days .day_num.booked,
+body:not(.wp-admin) .calendar .days .day_num.unavailable,
+body:not(.wp-admin) .calendar .days .day_num.disabled {
+    cursor: not-allowed;
+}
+.wpcb-booking .calendar .card {
+    max-width: unset !important;
+    padding: 0 !important;
+}
+.calendar .btn.update {
+    background-color: transparent;
+    color: #6e6e6e;
+    border: 1px solid #f7f7f7;
+}
+.calendar .btn.update:hover {
+    background-color: #6e6e6e;
+    border-color: #6e6e6e;;
+    color: #fff;
+}
+/* Legend */
+#legend-status .color-code {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #fff;
+}
+#legend-status .booked .color-code {
+    background-color: #379aff;
+}
+#legend-status .available .color-code {
+    background-color: #a8feb7;
+}
+#legend-status .unavailable .color-code {
+    background-color: #ffc0bd;
+}
+#legend-status .color-code {
+    text-align: center;
+    color: #fff;
+}
+#legend-status .color-code .fa-check {
+    padding-top: 5px;
+    font-size: 20px;
+}
+/* Go to */
+#month-year {
+    cursor: pointer;
+}
+.wpcb-booking .go-to-date .modal-dialog {
+    max-width: 375px !important;
+}
+.option .item {
+    padding: 10px 0;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+.option .item:hover,
+.option .item.active {
+    border-color:  #33d298;
+}
+body:not(.wp-admin) .option .item.disabled:hover {
+    border-color: transparent;
+}
+body:not(.wp-admin) .option .item.disabled {
+    color: #ababab;
+    pointer-events: none;
+}
+body:not(wp-admin) .calendar .btn.update.disabled {
+    pointer-events: none;
+}
+
+/* Tooltip */
+.date-tool-tip {
+    display: none;
+}
+.date-tool-tip {
+    position: absolute;
+    bottom: 80px;
+    width: 300px;
+    z-index: 9;
+    background-color: #fff;
+    box-shadow: 0 1px 6px #757575;
+    border-radius: 3px;
+    text-align: center;
+}
+.date-tool-tip .descryption {
+    font-size: 14px;
+    font-weight: normal;
+    color: #000;
+    padding: 6px 4px;
+}
+.day_num:hover .date-tool-tip {
+    display: block;
+}
+.arrow-down {
+    position: absolute;
+    left: calc(150px - 8px);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 5px solid #999;
+}
+
+/* MEDIA QUERIES */
+@media screen and ( max-width: 600px) {
+    .calendar-container {
+        overflow: scroll;
+    }
+    .calendar {
+        width: 400px;
+        height: 600px;
+    }
+    .calendar .days .day_num,
+    .calendar .days .day_name{
+        padding: 5px;
+        height: 50px;
+    }
+}

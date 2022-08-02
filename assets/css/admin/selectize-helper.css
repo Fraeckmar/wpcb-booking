@@ -1,0 +1,14 @@
+.selectize-control {
+    padding: 0 !important;
+    line-height: 0;
+}
+.selectize-control .selectize-input{
+    border: none;
+    padding: 0.50rem;
+}
+
+@media screen and (max-width: 480px) {
+    #filter-wrap .selectize-control .selectize-input {
+        padding: 0.65rem;
+    }
+}
