@@ -1,2 +1,0 @@
-# wpcb-booking
-Online Booking
