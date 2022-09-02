@@ -68,16 +68,17 @@ class Calendar {
         $prev_date = date('Y-m-d', strtotime('-1 month',strtotime($this->current_date)));
         $next_date = date('Y-m-d', strtotime('+1 month', strtotime($this->current_date)));
         $enable_days = $wpcb_setting->get_setting('general', 'enable_days');
-        $week_days = $wpcb_booking->get_week_days();
         $year_month = date('Y-m', strtotime($this->current_date));
         $calendar_data = wpcb_get_calendar_dates($this->calendar_id, $this->booking_id);
         $calendar_data = !empty($calendar_data) && array_key_exists($year_month, $calendar_data) ? $calendar_data[$year_month] : [];
+        $calendar_data = apply_filters('wpcb_calendar_data', $calendar_data, $this->calendar_id, $this->booking_id);
         $current_month = date('m');
         ?>
-
-        <input type="hidden" name="year_month" value="<?php echo $year_month ?>"/>
-        <input type="hidden" id="calendar_id" name="calendar_id" value="<?php echo $this->calendar_id ?>"/>
-        <input type="hidden" id="booking_id" name="booking_id" value="<?php echo $this->booking_id ?>"/>
+        <?php do_action('wpcb_before_calendar'); ?>
+        <input type="hidden" name="year_month" value="<?php echo $year_month; ?>"/>
+        <input type="hidden" id="month-name" value="<?php echo date('F'); ?>">
+        <input type="hidden" id="calendar_id" name="calendar_id" value="<?php echo $this->calendar_id; ?>"/>
+        <input type="hidden" id="booking_id" name="booking_id" value="<?php echo $this->booking_id; ?>"/>
         <input type="hidden" id="go_to_date" data-year="<?php echo $this->active_year ?>" data-month="<?php echo $this->active_month ?>"/>
         <?php if($this->has_date_modal): ?>
             <input type="hidden" id="has_date_modal" name="has_date_modal" value="true"/>
@@ -111,27 +112,27 @@ class Calendar {
                         $current_date = date('Y-m-d', strtotime("{$this->active_year}-{$this->active_month}-{$i}"));
                         $day_name = date('D', strtotime($current_date));
                         $day_class = ($i == $this->active_day) ? 'current' : ''; 
-                        if (!empty($calendar_data) && array_key_exists($current_date, $calendar_data)) {
+                        if (!empty($calendar_data) && array_key_exists($current_date, $calendar_data) && !wpcb_allow_multiple_booking()) {
                             $status =  $calendar_data[$current_date]['status'];
                         }                        
                         if (empty($status)) {
                             $status = !in_array($day_name, $enable_days) ? 'disabled' : 'available';
                         }
-                        $status = apply_filters('wpcb_calendar_status', $status, $this->calendar_id, $this->booking_id);                      
+                        $status = apply_filters('wpcb_calendar_status', $status, $current_date, $calendar_data, $this->booking_id);                      
                         $booked_icon_class =  $status == 'booked' ? 'd-block' : 'd-none';
                         $day_class .= " {$status}";                    
                         ?>
                         <div class="day_num <?php echo $day_class; ?>">
                             <input type="checkbox" name="dates[]" value="<?php echo $i; ?>" class="date-check d-none"/>
-                            <?php do_action('wpcb_before_calendar_date', $this->calendar_id, $current_date, $i); ?>
-                            <span><?php echo $i; ?></span>
+                            <?php do_action('wpcb_before_calendar_date', $this->calendar_id, $current_date, $i, $status); ?>
+                            <span class="day_num_val"><?php echo $i; ?></span>
                             <span class="booked-status <?php echo $booked_icon_class ?>"><i class="fa fa-check"></i></span>
                             <?php
                                 if ($this->has_date_modal) {
                                     wpcb_draw_date_modal($this->calendar_id, $current_date, $i);
                                 }
                             ?>
-                            <?php do_action('wpcb_after_calendar_date', $this->calendar_id, $current_date,  $i); ?>
+                            <?php do_action('wpcb_after_calendar_date', $this->calendar_id, $current_date, $i, $status); ?>
                         </div>
                     <?php endfor; ?>
 
@@ -144,6 +145,7 @@ class Calendar {
                 </div>
             </div>
         </div>
+        <?php do_action('wpcb_after_calendar'); ?>
         <div class="go-to-date">                
             <div class="modal fade text-left" id="calendar-modal" tabindex="-1" role="dialog" aria-labelledby="calendarModal" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">

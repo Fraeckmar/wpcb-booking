@@ -56,7 +56,8 @@ class WPCB_Booking {
             'checkbox' => 'form-check-input',
             'radio' => 'form-check-input',
             'link' => 'btn btn-link',
-            'button' => 'btn btn-primary'
+            'button' => 'btn btn-primary',
+            'date' => 'form-control date_picker w-md-50 w-sm-100'
         );
         return apply_filters('wpcb_booking_field_class', $field_class);
     }

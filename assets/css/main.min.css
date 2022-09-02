@@ -10169,3 +10169,15 @@
 }
 /* New rules */
 /*# sourceMappingURL=bootstrap.css.map */
+
+/* Custom */
+.note.note-primary {
+  background-color: #9afad769;
+  border-color: #33d298;
+}
+.note {
+  padding: 5px;
+  border-left: 6px solid;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}

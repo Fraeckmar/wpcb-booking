@@ -91,15 +91,25 @@ class WPCB_Sub_Menu
                 }             
             }
 
-            $s_booking = isset($_POST['s']) ? $_POST['s']  : '';
+            $q_booking = isset($_POST['q_booking']) ? $_POST['q_booking']  : '';
+            $q_customer_name = isset($_POST['wpcb_customer_name']) ? $_POST['wpcb_customer_name'] : '';
             $post_per_page = isset($_POST['wpcb_per_page']) ? $_POST['wpcb_per_page']  : 10; 
-            $meta_query = apply_filters( 'wpcb_manage_booking_meta_query', array());
+            $meta_query = array();
+            if (!empty($q_customer_name)) {
+                $meta_query[] = array(
+                    'key' => 'wpcb_customer_name',
+                    'value' => $q_customer_name,
+                    'compare' => '='
+                );
+            }
+            $meta_query = apply_filters( 'wpcb_manage_booking_meta_query', $meta_query);
+            $paged = isset($_GET['paged']) && is_numeric($_GET['paged']) ? $_GET['paged'] : 1; 
             $active_args = array(
                 'post_type'         => 'wpcb_booking',
                 'post_status'       => 'publish',
                 'posts_per_page'    => $post_per_page,
-                'paged'             => get_query_var('paged'),
-                's'                 => $s_booking,
+                'paged'             => $paged,
+                's'                 => $q_booking,
                 'meta_query' => array(
                     'relation' => 'AND',
                     $meta_query
@@ -110,16 +120,20 @@ class WPCB_Sub_Menu
                 'post_type'         => 'wpcb_booking',
                 'post_status'       => 'trash',
                 'posts_per_page'    => $post_per_page,
-                'paged'             => get_query_var('paged'),
-                's'                 => $s_booking
+                'paged'             => $paged,
+                's'                 => $q_booking
             );
 
-            $active_args = apply_filters( 'wpcb_manage_booking_args', $active_args );   
+            $active_args = apply_filters( 'wpcb_manage_booking_args', $active_args );
             $active_bookings  = new WP_Query( $active_args );
             $trash_bookings  = new WP_Query( $trash_args );
             $active_count = $active_bookings->found_posts;
             $trash_count = $trash_bookings->found_posts;
-            $bookings =  $is_active_booking ? $active_bookings : $trash_bookings;      
+            $bookings =  $is_active_booking ? $active_bookings : $trash_bookings;   
+            $number_records = $bookings->found_posts;
+            $basis = $paged * $post_per_page;
+            $record_end     = $number_records < $basis ? $number_records : $basis ;
+            $record_start   = $basis - ( $post_per_page - 1 );   
             $template = wpcb_get_template('manage-booking.tpl', true);
             require_once $template;
         }

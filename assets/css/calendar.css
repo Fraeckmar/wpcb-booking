@@ -76,14 +76,22 @@
     display: flex;
     flex-flow: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     font-weight: bold;
-    color: #7c878d;
+    color: #252525;
     cursor: pointer;
     border-right: 1px solid #fff;
+    overflow: hidden;
+}
+.hourly .calendar .days .day_num {
+    justify-content: center;
 }
 .day_num.ignore {
     pointer-events:none;
+}
+.day_num .daily-rate {
+    font-weight: normal;
+    font-size: 85%;
 }
 .calendar .day_num.selected {
     background-color: #33d298 !important;

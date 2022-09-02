@@ -13,6 +13,43 @@ function wpcb_date_format()
 {
     return apply_filters('wpcb_date_format', "Y-m-d");
 }
+function wpcb_number_format($value, $currency=false, $decimals_count=2)
+{
+    $formatted_number = apply_filters('wpcb_number_format', number_format($value, $decimals_count));
+    if ($currency) {
+        $currency_symbol = wpcb_get_currency();
+        $formatted_number = $currency_symbol.$formatted_number;
+    }
+    return $formatted_number;
+}
+function wpcb_encrypt($value)
+{
+    return base64_encode(maybe_serialize($value));
+}
+function wpcb_decrypt($value)
+{
+    return maybe_unserialize(base64_decode($value));
+}
+function wpcb_has_decimal_value($value)
+{
+    return fmod($value, 1) != 0;
+}
+function wpcb_get_currency(){
+    return function_exists('get_woocommerce_currency_symbol') ? get_woocommerce_currency_symbol() : '';
+}
+function wpcb_allow_multiple_booking()
+{
+    $llow_multiple_booking = false;
+    return apply_filters('wpcb_allow_multiple_booking', $llow_multiple_booking);
+}
+function wpcb_get_rate_type()
+{
+    $rate_type = 'no-rate';
+    if (function_exists('wpcr_get_rate_type')) {
+        $rate_type = strtolower(wpcr_get_rate_type());
+    }
+    return $rate_type;
+}
 function wpcb_set_notification($msg, $alert_type='success', $icon='check')
 {
     $_POST['wpcb_notification'] = [
@@ -20,6 +57,15 @@ function wpcb_set_notification($msg, $alert_type='success', $icon='check')
         'type' => $alert_type,
         'icon' => $icon
     ];
+}
+function wpcb_get_booking_id_by_order($order_id)
+{
+    global $wpdb;
+    $sql = "SELECT item.meta_value AS booking_id
+            FROM wp_woocommerce_order_itemmeta item 
+            INNER JOIN wp_woocommerce_order_items ord ON item.order_item_id = ord.order_item_id
+            WHERE ord.order_id = %d AND item.meta_key = 'BOOKING ID'";
+    return $wpdb->get_var($wpdb->prepare($sql, $order_id)) ?? 0;
 }
 function wpcb_update_post_status($post_id, $status)
 {
@@ -39,8 +85,9 @@ function wpcb_update_post_status($post_id, $status)
 
 function wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $data)
 {
-    $selected_dates = isset($data['dates']) ? $data['dates'] : [];
-    $calendar_dates = get_post_meta($calendar_id, 'dates', true) ?? [];
+    $selected_dates = isset($data['dates']) ? $data['dates'] : array();
+    $calendar_dates = get_post_meta($calendar_id, 'dates', true);
+    $calendar_dates = empty($calendar_dates) ? array() : $calendar_dates;
     foreach ($selected_dates as $selected_date) {
         $_date = date(wpcb_date_format(), strtotime("{$year_month}-{$selected_date}"));
         $calendar_dates[$year_month][$_date]['status'] = 'booked';
@@ -172,7 +219,6 @@ function wpcb_compress_single_array($uncompressed_array)
 
 function wpcb_get_calendar_dates($calendar_id, $booking_id=null)
     {
-        $years = [];
         $dates = [];
         if ($booking_id) {
             $booked_dates = get_post_meta($booking_id, 'booked_dates', true);
@@ -184,6 +230,25 @@ function wpcb_get_calendar_dates($calendar_id, $booking_id=null)
             }
         } else {
             $dates = !empty($calendar_id) ? get_post_meta($calendar_id, 'dates', true) : array();
+            if (!empty($dates)) {
+                foreach ($dates as $_month => $month_dates) {
+                    foreach ($month_dates as $_date => $data) {
+                        $booking_ids = array_key_exists('booking_ids', $data) ? $data['booking_ids'] : array();
+                        if ($data['status'] == 'booked' && !empty($booking_ids)) {
+                            foreach ($booking_ids as $booking_id) {
+                                if (get_post_status($booking_id) != 'publish') {
+                                    $data['status'] = 'available';
+                                    $booking_id_idx = array_search($booking_id, $booking_ids);
+                                    unset($booking_ids[$booking_id_idx]);
+                                }
+                            }
+                        }
+                        $data['booking_ids'] = $booking_ids;
+                        $month_dates[$_date] = $data;
+                    }
+                    $dates[$_month] = $month_dates;
+                }
+            }
         }
         return $dates;
     }
@@ -282,4 +347,99 @@ function wpcb_get_default_admin_mail_footer()
 {
     $footer = "<p>Your Company Name</p>";
     return $footer;
+}
+
+function wpcb_error_handler($error)
+{
+    echo "<p class='wpcb-error'> {$error} </p>";
+    ?>
+    <style>
+        .wpcb-error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        padding: 5px 10px;
+        border-radius: 3px;
+    }
+    </style>
+    <?php
+    die();
+}
+
+// Custom Pagination
+function wpcb_bootstrap_pagination( $args = array() ) {
+    $defaults = array(
+        'range'           => 4,
+        'custom_query'    => FALSE,
+        'previous_string' => __( 'Previous', 'wpcb_booking' ),
+        'next_string'     => __( 'Next', 'wpcb_booking' ),
+        'before_output'   => '<nav class="post-nav" aria-label="'.__('Booking Pagination', 'wpcb_booking').'"><ul class="pagination pg-blue justify-content-center">',
+        'after_output'    => '</ul></nav>'
+    );
+    
+    $args = wp_parse_args( 
+        $args, 
+        apply_filters( 'wp_bootstrap_pagination_defaults', $defaults )
+    );
+    
+    $args['range'] = (int) $args['range'] - 1;
+    if ( !$args['custom_query'] )
+        $args['custom_query'] = @$GLOBALS['wp_query'];
+    $count = (int) $args['custom_query']->max_num_pages;
+    $page = isset($_GET['paged']) && is_numeric($_GET['paged']) ? $_GET['paged'] : 1;
+    $ceil  = ceil( $args['range'] / 2 );
+    
+    if ( $count <= 1 )
+        return FALSE;
+    
+    if ( !$page )
+        $page = 1;
+    
+    if ( $count > $args['range'] ) {
+        if ( $page <= $args['range'] ) {
+            $min = 1;
+            $max = $args['range'] + 1;
+        } elseif ( $page >= ($count - $ceil) ) {
+            $min = $count - $args['range'];
+            $max = $count;
+        } elseif ( $page >= $args['range'] && $page < ($count - $ceil) ) {
+            $min = $page - $ceil;
+            $max = $page + $ceil;
+        }
+    } else {
+        $min = 1;
+        $max = $count;
+    }
+    
+    $echo = '';
+    $previous = intval($page) - 1;
+    $previous = esc_attr( get_pagenum_link($previous) );
+    
+    $firstpage = esc_attr( get_pagenum_link(1) );
+    if ( $firstpage && (1 != $page) )
+        $echo .= '<li class="previous page-item"><a class="page-link waves-effect waves-effect" href="' . $firstpage . '">' . __( 'First', 'wpcb_booking' ) . '</a></li>';
+    if ( $previous && (1 != $page) )
+        $echo .= '<li class="page-item" ><a class="page-link waves-effect waves-effect" href="' . $previous . '" title="' . __( 'previous', 'wpcb_booking') . '">' . $args['previous_string'] . '</a></li>';
+    
+    if ( !empty($min) && !empty($max) ) {
+        for( $i = $min; $i <= $max; $i++ ) {
+            if ($page == $i) {
+                $echo .= '<li class="page-item active"><span class="page-link waves-effect waves-effect">' . str_pad( (int)$i, 2, '0', STR_PAD_LEFT ) . '</span></li>';
+            } else {
+                $echo .= sprintf( '<li class="page-item"><a class="page-link waves-effect waves-effect" href="%s">%002d</a></li>', esc_attr( get_pagenum_link($i) ), $i );
+            }
+        }
+    }
+    
+    $next = intval($page) + 1;
+    $next = esc_attr( get_pagenum_link($next) );
+    if ($next && ($count != $page) )
+        $echo .= '<li class="page-item"><a class="page-link waves-effect waves-effect" href="' . $next . '" title="' . __( 'next', 'wpcb_booking') . '">' . $args['next_string'] . '</a></li>';
+    
+    $lastpage = esc_attr( get_pagenum_link($count) );
+    if ( $lastpage ) {
+        $echo .= '<li class="next page-item"><a class="page-link waves-effect waves-effect" href="' . $lastpage . '">' . __( 'Last', 'wpcb_booking' ) . '</a></li>';
+    }
+    if ( isset($echo) )
+        echo $args['before_output'] . $echo . $args['after_output'];
 }

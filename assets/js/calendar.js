@@ -3,6 +3,7 @@ jQuery(document).ready(function($){
     var is_admin = WPCBBookingAjax.is_admin;
     var notification = WPCBBookingAjax.notification;
     var loading_html = '<div class="wpcb-loading text-info text-center h3"> <span class="spinner-grow spinner-border-sm"></span></div>';
+    
     window.wpcb_show_loading = function() {
         $('.wpcb-booking').append(loading_html);
     }
@@ -56,8 +57,7 @@ jQuery(document).ready(function($){
     window.update_calendar = function (date, calendar_id='', booking_id='') {
         let has_date_modal = $('.calendar').find('#has_date_modal').val();
         
-        $.ajax({
-            type: 'GET',
+        $.get({
             url: ajaxurl,
             data: {
                 action: 'wpcb_calendar_change',
@@ -74,6 +74,7 @@ jQuery(document).ready(function($){
                 $('.calendar').hide().html(response).fadeIn(500);
                 if (!is_admin) {
                     update_calendar_date_heights();
+                    reset_summary();
                 }                
             }
         });
@@ -89,6 +90,8 @@ jQuery(document).ready(function($){
 
     $('.calendar').on('click', '.go-to-date .option .item', function(){
         let modal = $('.calendar').find('#calendar-modal');
+        let calendar_id = $('.calendar').find('#calendar_id').val();
+        let booking_id = $('.calendar').find('#booking_id').val();
         let value = $(this).data('value');
         let next = $(this).data('next');
         let item_name = $(this).data('item');
@@ -101,7 +104,7 @@ jQuery(document).ready(function($){
             let goto_year = $('#go_to_date').data('year');
             let goto_month = $('#go_to_date').data('month');
             let goto_date = goto_year+'-'+goto_month;
-            update_calendar(goto_date);
+            update_calendar(goto_date, calendar_id, booking_id);
         }        
     });
 
@@ -112,4 +115,11 @@ jQuery(document).ready(function($){
         }     
         display_goto_dates(display_option);        
     });
+
+    function reset_summary()
+    {
+        $('body').find('#order-summary #details').html('');
+        $('body').find('#order-summary #total-amount').html(0);
+        $('body').find('#order-summary').addClass('d-none');
+    }
 });

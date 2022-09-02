@@ -11,4 +11,5 @@ jQuery(document).ready(function($){
             showNotification('Please select prefered dates.', 'danger', 'info');
         }
     });
+    
 });

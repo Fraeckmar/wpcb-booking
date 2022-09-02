@@ -65,7 +65,11 @@ class Booking_Shortcode
     {
         global $wpcb_setting;
         $page_id = $wpcb_setting->get_setting('general', 'thankyou_page');
-        if ($page_id) {
+        if (function_exists('wpcr_is_enable_payment')) {
+            if (!wpcr_is_enable_payment()) {
+                wp_redirect(get_permalink($page_id));
+            }            
+        } else if ($page_id) {
             wp_redirect(get_permalink($page_id));
         }
     }

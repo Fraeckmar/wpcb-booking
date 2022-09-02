@@ -77,63 +77,91 @@ class WPCB_Form
             }
         }
 
-        if ($type == 'url') {
-            $html_field .= '<a href="'.$value.'" id="'.$key.'" class="'.$field_class.'" '.$extras.'></a>';
-        } else if ($type == 'textarea') {
-            $html_field .= '<textarea id="'.$key.'" name="'.$field_name.'" class="'.$field_class.'" placeholder="'.$placeholder.'" '.$extras.'>'.$value.'</textarea>';
-        } else if ($type == 'select') {
-            $brakets = '';
-            $placeholder = !empty($placeholder) ? $placeholder : 'Choose...';
-            if (!empty($extras) && strpos($extras, 'multiple') !== false) {
-                $brakets = '[]';
-            }
-            
-            $html_field .= '<select id="'.$key.'" name="'.$field_name.$brakets.'" class="custom-select '.$field_class.'" '.$extras.'>';
-                $html_field .= '<option value=""> '.$placeholder.' </option>';
-            if (!empty($options) && is_array($options)) {
-                $is_assoc_arr = !array_key_exists(0, $options);
-                foreach ($options as $op_val => $op_label) {
-                    if (!$is_assoc_arr) {
-                        $op_val = $op_label;
-                    }
-                    $opt_selected = $op_val == $value ? 'selected' : '';
-                    if (is_array($value)) {
-                        if (in_array($op_val, $value)) {
-                            $opt_selected = 'selected';
+        switch ($type) {
+            case 'url':
+                $html_field .= '<a href="'.$value.'" id="'.$key.'" class="'.$field_class.'" '.$extras.'></a>';
+                break;
+            case 'textarea':
+                $html_field .= '<textarea id="'.$key.'" name="'.$field_name.'" class="'.$field_class.'" placeholder="'.$placeholder.'" '.$extras.'>'.$value.'</textarea>';
+                break;
+            case 'select':
+                $brakets = '';
+                $placeholder = !empty($placeholder) ? $placeholder : 'Choose...';
+                if (!empty($extras) && strpos($extras, 'multiple') !== false) {
+                    $brakets = '[]';
+                }
+                
+                $html_field .= '<select id="'.$key.'" name="'.$field_name.$brakets.'" class="custom-select '.$field_class.'" '.$extras.'>';
+                    $html_field .= '<option value=""> '.$placeholder.' </option>';
+                if (!empty($options) && is_array($options)) {
+                    $is_assoc_arr = !array_key_exists(0, $options);
+                    foreach ($options as $op_val => $op_label) {
+                        if (!$is_assoc_arr) {
+                            $op_val = $op_label;
                         }
+                        $opt_selected = $op_val == $value ? 'selected' : '';
+                        if (is_array($value)) {
+                            if (in_array($op_val, $value)) {
+                                $opt_selected = 'selected';
+                            }
+                        }
+                        $html_field .= '<option value="'.$op_val.'" '.$opt_selected.'> '.$op_label.' </option>';
                     }
-                    $html_field .= '<option value="'.$op_val.'" '.$opt_selected.'> '.$op_label.' </option>';
                 }
-            }
-            $html_field .= '</select>';
-        } else if (in_array($type, ['checkbox', 'radio'])) {
-            $field_name = $type == 'checkbox' ? $field_name.'[]' : $field_name;
-            if ($with_form_group) {
-                $html_field .= '<label class="form-label d-block">'.$label.'</label>';
-            }            
-            if (!empty($options)) {
-                $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
-                $counter = 0;
-                foreach ($options as $op_val) {
-                    $counter ++;
-                    if ($type == 'checkbox') {
-                        $checked = !empty($value) ? checked(in_array($op_val, $value), 1, false) : '';
-                    } else {
-                        $checked = checked($op_val == $value, 1, false);
+                $html_field .= '</select>';
+                break;
+            case 'checkbox':
+            case 'radio':
+                $field_name = $type == 'checkbox' ? $field_name.'[]' : $field_name;
+                if ($with_form_group) {
+                    $html_field .= '<label class="form-label d-block">'.$label.'</label>';
+                }            
+                if (!empty($options)) {
+                    $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
+                    $counter = 0;
+                    foreach ($options as $op_val) {
+                        $counter ++;
+                        if ($type == 'checkbox') {
+                            $checked = !empty($value) ? checked(in_array($op_val, $value), 1, false) : '';
+                        } else {
+                            $checked = checked($op_val == $value, 1, false);
+                        }
+                        $html_field .= '<div class="form-check '.$group_class.'">';
+                            $html_field .= '<input type="'.$type.'" id="'.$key.'-'.$counter.'" name="'.$field_name.'" value="'.$op_val.'" class="form-check-input '.$class.'" '.$extras.' '.$checked.' type="checkbox">';
+                            $html_field .= '<label class="form-check-label" for="'.$key.'-'.$counter.'">'.$op_val.'</label>';
+                        $html_field .= '</div>';
                     }
-                    $html_field .= '<div class="form-check '.$group_class.'">';
-                        $html_field .= '<input type="'.$type.'" id="'.$key.'-'.$counter.'" name="'.$field_name.'" value="'.$op_val.'" class="form-check-input '.$class.'" '.$extras.' '.$checked.' type="checkbox">';
-                        $html_field .= '<label class="form-check-label" for="'.$key.'-'.$counter.'">'.$op_val.'</label>';
-                    $html_field .= '</div>';
                 }
-            }
-        } else {
-            $html_field .= '<input type="'.$type.'" id="'.$key.'" class="'.$field_class.'" name="'.$field_name.'" value="'.$value.'" placeholder="'.$placeholder.'" '.$extras.'/>';
+                break;
+            default: 
+                $html_field .= '<input type="'.$type.'" id="'.$key.'" class="'.$field_class.'" name="'.$field_name.'" value="'.$value.'" placeholder="'.$placeholder.'" '.$extras.'/>';
         }
 
         if ($with_form_group && !in_array($type, ['checkbox', 'radio'])) {
             $html_field .= '</div>';
         }
         return $html_field;
+    }
+
+    public static function draw_hidden($name, $value)
+    {
+        echo "<input type='hidden' id='{$name}' name='{$name}' value='{$value}'>";
+    }
+
+    public static function draw_search_field($meta_key, $value, $label='', $placeholder='', $extras='', $form_group=false)
+    {
+        $options = [$meta_key => $value];
+        $fields = [
+            'key' => $meta_key,
+            'type' => 'select',
+            'label' => $label,
+            'options' => $options,
+            'value' => $value,
+            'class' => 'selectize-search',
+            'extras' => $extras,
+            'placeholder' => $placeholder
+        ];
+        self::draw_hidden("{$meta_key}_options", base64_encode(json_encode($options)));
+        echo self::gen_field($fields, $form_group);
     }
 }
