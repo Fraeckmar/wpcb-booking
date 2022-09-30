@@ -9,9 +9,12 @@
     z-index: 9999;
 }
 .wpcb-loading .spinner-grow {
-    margin-top: 40%;
+    margin-top: 25%;
     width: 2.2rem;
     height: 2.2rem;
+}
+.wpcb-loading .calendar .spinner-grow {
+    margin-top: 40%;
 }
 
 /* Animation */
@@ -81,7 +84,7 @@
     color: #252525;
     cursor: pointer;
     border-right: 1px solid #fff;
-    overflow: hidden;
+    /* overflow: hidden; */ /* conflict to tooltip */
 }
 .hourly .calendar .days .day_num {
     justify-content: center;

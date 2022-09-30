@@ -4,17 +4,58 @@ function wpcb_booking_default_status()
 {
     return apply_filters('wpcb_booking_default_status', 'Pending Approval');
 }
-function wpcb_restrict_booking_in_status()
-{
-    $status_list = array('Approved', 'Complete');
-    return apply_filters('wpcb_restrict_booking_in_status', $status_list);
-}
 function wpcb_date_format()
 {
     return apply_filters('wpcb_date_format', "Y-m-d");
 }
+function wpcb_datepicker_format()
+{
+    return apply_filters('wpcb_datepicker_format', 'YYYY-MM-DD');
+}
+function wpcb_woo_is_active()
+{
+    return class_exists('woocommerce');
+}
+function dd($data, $die=false)
+{
+    if (isset($_GET['debug'])) {
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
+        if ($die) {
+            die();
+        }
+    }
+}
+function wpcb_customer_field($retrieve_field='')
+{
+    $field = [
+        'key' => 'wpcb_customer_name',
+        'label' => __('Customer', 'wpcb_booking')
+    ];
+    if (class_exists('wpcf_admin')) {
+        $customer_field_id = wpcf_get_setting_value('customer_field');
+        if ($customer_field_id) {
+            $customer_field = wpcf_get_custom_field_data($customer_field_id);
+            if (!empty($customer_field)) {
+                $field['key'] = $customer_field['field_key'];
+                $field['label'] = $customer_field['label'];
+            }
+            
+        }
+    }
+    if (!empty($retrieve_field)) {
+        if (array_key_exists($retrieve_field, $field)) {
+            $field = $field[$retrieve_field];
+        }
+    }
+    return apply_filters('wpcb_customer_field', $field);
+}
 function wpcb_number_format($value, $currency=false, $decimals_count=2)
 {
+    if (!is_numeric($value)) {
+        return false;
+    }
     $formatted_number = apply_filters('wpcb_number_format', number_format($value, $decimals_count));
     if ($currency) {
         $currency_symbol = wpcb_get_currency();
@@ -82,7 +123,14 @@ function wpcb_update_post_status($post_id, $status)
     );
     wp_update_post($args);
 }
-
+function wpcb_clean_dir($directory)
+{
+	$files = glob( $directory.'*'); // get all file names
+	foreach($files as $file){ // iterate files
+	if(is_file($file))
+		unlink($file); // delete file
+	}
+}
 function wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $data)
 {
     $selected_dates = isset($data['dates']) ? $data['dates'] : array();
@@ -345,7 +393,7 @@ function wpcb_get_default_admin_mail_body()
 }
 function wpcb_get_default_admin_mail_footer()
 {
-    $footer = "<p>Your Company Name</p>";
+    $footer = "<p>Your Company Address here..</p>";
     return $footer;
 }
 
@@ -364,6 +412,48 @@ function wpcb_error_handler($error)
     </style>
     <?php
     die();
+}
+
+function wpcb_export_file_format_list(){
+	$extension = array(
+		'xls' => ",", 
+		'xlt' => ",", 
+		'xla' => ",", 
+		'xlw' => ",",
+		'csv' => ","
+	);
+	return apply_filters( 'wpcb_export_file_format_list', $extension );
+}
+
+function wpcb_create_report($headers, $data, $format='csv')
+{
+    $formats = wpcb_export_file_format_list();
+    $format = array_key_exists($format, $formats) ? $format : 'csv';
+    $delimeter = array_key_exists($format, $formats) ? $formats[$format] : ',';
+    $file_directory = WPCB_BOOKING_PLUGIN_PATH."tmp_files".DIRECTORY_SEPARATOR;
+    $filename_unique = "booking-export-".time().'.'.trim($format);
+    $file_url = WPCB_BOOKING_PLUGIN_URL."tmp_files".DIRECTORY_SEPARATOR.$filename_unique;
+    wpcb_clean_dir($file_directory);
+	$csv_file = fopen($file_directory.$filename_unique, "w");	
+    
+
+    //write utf-8 characters to file with fputcsv in php
+	fprintf($csv_file, chr(0xEF).chr(0xBB).chr(0xBF));
+    if (!empty($headers)) {
+        fputcsv($csv_file, $headers, $delimeter);
+    }
+    if (!empty($data)) {
+        foreach ($data as $post_id => $datas) {
+            foreach ($datas as $_key => $_data) {
+                if (is_array($_data)) {
+                    $datas[$_key] = implode(' | ', $_data);
+                }
+            }  
+            fputcsv($csv_file, $datas, $delimeter);          
+        }
+    }
+    fclose($csv_file);
+    return $file_url;
 }
 
 // Custom Pagination
@@ -416,10 +506,12 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     $previous = esc_attr( get_pagenum_link($previous) );
     
     $firstpage = esc_attr( get_pagenum_link(1) );
-    if ( $firstpage && (1 != $page) )
+    if ( $firstpage && (1 != $page) ) {
         $echo .= '<li class="previous page-item"><a class="page-link waves-effect waves-effect" href="' . $firstpage . '">' . __( 'First', 'wpcb_booking' ) . '</a></li>';
-    if ( $previous && (1 != $page) )
+    }
+    if ( $previous && (1 != $page) ) {
         $echo .= '<li class="page-item" ><a class="page-link waves-effect waves-effect" href="' . $previous . '" title="' . __( 'previous', 'wpcb_booking') . '">' . $args['previous_string'] . '</a></li>';
+    }
     
     if ( !empty($min) && !empty($max) ) {
         for( $i = $min; $i <= $max; $i++ ) {
@@ -433,13 +525,16 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     
     $next = intval($page) + 1;
     $next = esc_attr( get_pagenum_link($next) );
-    if ($next && ($count != $page) )
+    if ($next && ($count != $page) ) {
         $echo .= '<li class="page-item"><a class="page-link waves-effect waves-effect" href="' . $next . '" title="' . __( 'next', 'wpcb_booking') . '">' . $args['next_string'] . '</a></li>';
+    }
     
     $lastpage = esc_attr( get_pagenum_link($count) );
     if ( $lastpage ) {
         $echo .= '<li class="next page-item"><a class="page-link waves-effect waves-effect" href="' . $lastpage . '">' . __( 'Last', 'wpcb_booking' ) . '</a></li>';
     }
-    if ( isset($echo) )
+    if ( isset($echo) ) {
         echo $args['before_output'] . $echo . $args['after_output'];
+    }
 }
+        

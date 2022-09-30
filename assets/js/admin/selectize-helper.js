@@ -27,17 +27,18 @@ jQuery(document).ready(function($){
     if (selectize_search.length) {
         selectize_search.each(function(){
             let meta_key = $(this).prop('id');
-            let search_options = $(this).parent().find('#'+meta_key+'_options').val();
+            let search_options = $(this).parents().eq(2).find('#'+meta_key+'_options').val();
             let placeholder = $(this).prop('placeholder');
             let no_result_html = '<div class="selectize-no-result"><span>No result found</span></div>';
+            var loading_html = '<div class="wpcb-loading text-info text-center h3"> <span class="spinner-grow spinner-border-sm"></span></div>';
 
             var search_value = '';
             if (search_options) {
                 search_options = JSON.parse(atob(search_options));
                 search_value = search_options[meta_key];
                 search_options = [search_options];
-                console.log(search_options);
             }
+
             let selectize_param = {
                 valueField: meta_key,
                 labelField: meta_key,
@@ -64,7 +65,11 @@ jQuery(document).ready(function($){
                         error: function() {
                             callback();
                         },
+                        beforeSend: function() {
+                            wpcb_show_loading();
+                        },
                         success: function(data) {
+                            wpcb_hide_loading();
                             callback(data);
                         }
                     });

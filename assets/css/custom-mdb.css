@@ -37,6 +37,25 @@
     -webkit-user-select: none;
     user-select: none;
 }
+.wpcb-booking ul.bullets {
+    list-style-type: disc !important;
+    padding-left:1em !important;
+    margin-left:1em;
+}
+
+.wpcb-booking input::placeholder,
+.wpcb-booking select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #adadad !important;
+    opacity: 1; /* Firefox */
+}
+.wpcb-booking input:-ms-input-placeholder,
+.wpcb-booking select:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #adadad !important;
+}
+.wpcb-booking input::-ms-input-placeholder,
+.wpcb-booking select::-ms-input-placeholder { /* Microsoft Edge */
+    color: #adadad !important;
+}
 
 @media (min-width: 1024px) {
     .wpcb-booking .form-control.date_picker {

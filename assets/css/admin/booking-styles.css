@@ -84,6 +84,12 @@ body.modal-open {
 .wpcb-booking .table thead{
     border: 1px solid #cecece;
 }
+#calendar-list .shortcode span {
+    font-weight: 600;
+}
+#calendar-list .shortcode span .fa {
+    font-size: 16px;
+}
 
 /* Manage Booking */
 #booking-list .booked-date {
@@ -91,7 +97,7 @@ body.modal-open {
     border-radius: 5px;
     margin: 2px;
 }
-#booking-post .calendar .days .day_num.booked .booked-status {
+#booking-post .calendar .days .day_num .booked-status {
     background-color: #379aff;
     color: #fff;
     font-size: 4px;
@@ -107,7 +113,7 @@ body.modal-open {
 #booking-post .calendar .days .day_num {
     height: 35px;
 }
-#booking-post .calendar .days .day_num.booked .booked-status .fa {
+#booking-post .calendar .days .day_num .booked-status .fa {
     font-size: 9px;
 }
 #booking-post #wpcb-booking-admin-form #month-year {
@@ -116,6 +122,11 @@ body.modal-open {
 }
 #booking-post #wpcb-booking-admin-form .calendar-header {
     padding: 5px;
+}
+.wpcb-booking ul.bullets {
+    list-style-type: disc !important;
+    padding-left:1em !important;
+    margin-left:1em;
 }
 
 /* Settings */
@@ -132,4 +143,92 @@ body.modal-open {
 }
 #shortcode-list thead tr {
     background-color: #ddd;
+}
+
+/* Placeholder */
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #adadad !important;
+    opacity: 1; /* Firefox */
+}
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #adadad !important;
+}
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: #adadad !important;
+}
+
+/* Adavance checkbox */
+/* The container */
+.cb-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.cb-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 3px;
+    left: 0px;
+    height: 18px;
+    width: 18px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.cb-container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.cb-container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.cb-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.cb-container .checkmark:after {
+    left: 7px;
+    top: 2px;
+    width: 5px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.calendar .hourly-rate-modal .modal-body {
+    font-weight: normal !important;
+}
+.calendar .days .day_num .hourly-rate-modal .modal-body{
+    font-size: 16px;
+}
+.hourly-rate-modal .modal-body .justify-content-between {
+    padding: 4px 0;
 }

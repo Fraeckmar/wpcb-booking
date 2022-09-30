@@ -1,30 +1,28 @@
-=== Booking Systemt & Notification ===
+=== Booking Calendar and Notification ===
 
-Contributors: Calendar Booking
-Donate link: http://lerevel-inventory.herokuapp.com
-Tags: booking, online booking, booking system, calendar, calendar notification
-Tested up to: 5.9.0
-Requires PHP: 7.0
+Contributors: Booking Calendar
+Donate link: paypal.me/mica0215Orellabac
+Tags: booking, online booking, reservation, booking system, calendar, calendar notification
+Tested up to: 6.0.2
+Requires PHP: 5.0 or newer
 Stable tag: 3.x.x
 
-Booking Systemt & Notification is a WordPress plug-in designed to provide ideal technology solution for your Cargo and Courier Operations. Whether you are an exporter, freight forwarder, importer, supplier, customs broker, overseas agent, or warehouse operator, WPCargo helps you to increase the visibility, efficiency, and quality services of your cargo and shipment business.
+Booking Calendar and Notification is a plug-in designed for easy booking to your business. You can set and display your date(s) whether it is avaiable, unavailable or booked and manage booking of your customers.
 
 = Core Plugin Features =
 
-* Booking Form
-* Manage Booking 
+* Booking Form - using shortcode
+* Manage Bookings
 * Booking Settings
-* Search & Sorting of Booking List
-* Email Notification
-* Customer Dashboard - shortcode booking online 
-* Multilingual Support
-* Multiple Packages
+* Calendar Settings
+* Email Settings & Notification
+* Generate Report
 
 = Premium Features =
 
 * [Fully customizable form fields]
-* [SMS Notification]
-* [Hourly Booking]
+* [Daily or Hourly Rates and Booking]
+* [Online Payment integrated with WooCommerce]
 
 Contact Skype: franciscomaribao98
 

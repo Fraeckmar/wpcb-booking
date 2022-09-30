@@ -1,41 +1,72 @@
 <div id="booking-list" class="wrap wpcb-booking advanced-table">
     <h2><?php _e('Manage Booking', 'wpcb_booking'); ?> <a class="btn btn-sm btn-outline-secondary" href="<?php echo admin_url('admin.php?page=wpcb-booking&action=new') ?>"><?php _e('Add New', 'wpcb_booking'); ?></a></h2>
-    
-    <div class="row my-1" id="booking-filter">
-        <div class="col-lg-2 col-md-3 col-sm-12">
-            <ul class="subsubsub">
-                <li class="active"><a class="<?php echo $is_active_booking ? 'current' : '' ?>" href="<?php echo admin_url("admin.php?page=wpcb-booking") ?>">Active <span class="count">(<?php echo $active_count ?>)</span></a> |</li>
-                <li class="trash"><a class="<?php echo $is_active_booking ? '' : 'current' ?>" href="<?php echo admin_url("admin.php?page=wpcb-booking&status=trash") ?>">Trash <span class="count">(<?php echo $trash_count ?>)</span></a></li>
-            </ul>
-        </div>
-        <div class="col-lg-7 col-md-5 col-sm-12">
+    <div id="booking-status-nav" class="row">
+        <ul class="subsubsub col-sm-12">
+            <li class="active"><a class="<?php echo $is_active_booking ? 'current' : '' ?>" href="<?php echo admin_url("admin.php?page=wpcb-booking") ?>">Active <span class="count">(<?php echo $active_count ?>)</span></a> |</li>
+            <li class="trash"><a class="<?php echo $is_active_booking ? '' : 'current' ?>" href="<?php echo admin_url("admin.php?page=wpcb-booking&status=trash") ?>">Trash <span class="count">(<?php echo $trash_count ?>)</span></a></li>
+        </ul>
+    </div>
+    <div class="row mb-2" id="booking-filter">
+        <!-- Filters -->
+        <?php if($is_active_booking): ?>
+        <div class="col-lg-9 col-md-8 col-sm-12">
             <form method="POST" class="row justify-content-end">
-                <div class="col-md-3 p-0">
-                    <?php echo WPCB_Form::gen_field(['key'=>'date_from', 'type'=>'date', 'class'=>'w-100', 'placeholder'=>'Date From']); ?>
-                </div>
-                <div class="col-md-3 p-0">
-                    <?php WPCB_Form::draw_search_field('wpcb_customer_name', $q_customer_name, '', 'Customer Name'); ?>
+                <div class="col-md-2 p-0 pl-3">
+                    <?php echo WPCB_Form::gen_field(array('key'=>'date_from', 'type'=>'date', 'placeholder'=>'Date From', 'value'=>$date_from)); ?>
                 </div>
                 <div class="col-md-2 p-0">
-                    <button class="btn btn-outline-secondary" type="submit"><i class="fa fa-filter"></i> Filter</button>
+                    <?php echo WPCB_Form::gen_field(array('key'=>'date_to', 'type'=>'date', 'placeholder'=>'Date To', 'value'=>$date_to)); ?>
+                </div>
+                <div class="col-md-3 p-0">
+                    <?php WPCB_Form::draw_search_field('wpcb_booking_status', $q_wpcb_booking_status, '', 'Enter Status'); ?>
+                </div>
+                <div class="col-md-3 p-0">
+                    <?php WPCB_Form::draw_search_field(wpcb_customer_field('key'), $q_customer_name, '', wpcb_customer_field('label')); ?>
+                </div>
+                <div class="col-md-2 p-0">
+                    <button class="btn btn-secondary" type="submit"><i class="fa fa-filter"></i> Filter</button>
                 </div>
             </form>
         </div>
+        <!-- Search -->
         <div class="col-lg-3 col-md-4 col-sm-12">
             <form method="POST">
                 <div class="input-group bg-white">
                     <input type="text" class="form-control" name="q_booking" placeholder="Search Booking" required value="<?php echo $_POST['q_booking'] ?? ''; ?>">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit"><i class="fa fa-search"></i> Search</button>
+                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i> Search</button>
                     </div>
                 </div>
             </form>
         </div>
+        <?php endif; ?>
     </div>
+    <!-- Bulk Options -->
+    <div class="row align-items-end mb-2">
+        <div class="col-md-10 col-sm-12">
+            <div class="tablenav top">
+                <?php if(!$is_active_booking): ?>
+                    <?php echo WPCB_Form::gen_button('', 'Restore', 'button', 'bulk-update-post-status btn btn-sm btn-info', 'data-status="publish"'); ?>
+                <?php endif; ?>
+                <?php echo WPCB_Form::gen_button('', $bulk_update_label, 'button', 'bulk-update-post-status btn btn-sm btn-danger', $status_attr); ?>
+                <?php do_action('table_nav_top'); ?>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-12">
+            <form method="GET">
+                <?php WPCB_Form::draw_hidden('page', 'wpcb-booking') ?>
+                <?php echo WPCB_Form::gen_field(array('key'=>'post_per_page', 'type'=>'select', 'label'=>'Show Entries', 'options'=>$entries_options, 'value'=>$post_per_page, 'class'=>'ml-2', 'group_class'=>'form-group row justify-content-end form-inline m-0', 'required'=>true), true); ?>
+                <?php if(isset($_GET['paged'])): ?>
+                    <?php WPCB_Form::draw_hidden('paged', $_GET['paged']) ?>
+                <?php endif; ?>                      
+            </form>
+        </div>
+    </div>    
     <div class="table-responsive">
-        <table class="table">
+        <table id="booking-list-table" class="table mb-1">
             <thead>
                 <tr>
+                    <th width="10px"><input type="checkbox" class="all-booking"/></th>
                     <?php do_action('wpcb_manage_booking_before_column_head'); ?>
                     <th><?php _e('Booking Number', 'wpcb-booking'); ?></th>
                     <th><?php _e('Customer Name', 'wpcb_booking'); ?></th>
@@ -53,22 +84,23 @@
                         $meta_values = $wpcb_booking->wpcb_get_booking_details($booking_id);
                         $calendar_id = array_key_exists('calendar_id', $meta_values) ? $meta_values['calendar_id'] : 0;                
                         $booked_dates = array_key_exists('booked_dates', $meta_values) ? $meta_values['booked_dates'] : ''; 
-                        $booked_dates_str = "";
-                        if (!empty($booked_dates)) {
-                            foreach ($booked_dates as $idx => $booked_date) {
-                                $booked_date = date('F j, Y', strtotime($booked_date));
-                                $idx++;
-                                $separator = count($booked_dates) != $idx ? '|' : '';
-                                $br = $idx % 2 == 0 ? '<br>' : '';
-                                $booked_dates_str .= "<span class='booked-date'>{$booked_date}</span>{$separator}{$br}";
-                            }
-                        }
+                        $booked_dates_str = !empty($booked_dates) ? implode('<br>', $booked_dates) : '';
+                        // if (!empty($booked_dates)) {
+                        //     foreach ($booked_dates as $idx => $booked_date) {
+                        //         $booked_date = date('F j, Y', strtotime($booked_date));
+                        //         $idx++;
+                        //         $separator = count($booked_dates) != $idx ? '<br>' : '';
+                        //         $br = $idx % 2 == 0 ? '<br>' : '';
+                        //         $booked_dates_str .= "<span class='booked-date'>{$booked_date}</span>{$separator}{$br}";
+                        //     }
+                        // }
                         $edit_url = admin_url("admin.php?page=wpcb-booking&action=edit&id={$booking_id}");
                         $trash_url = admin_url("admin.php?page=wpcb-booking&action=trash&id={$booking_id}");
                         $restore_url = admin_url("admin.php?page=wpcb-booking&action=untrash&id={$booking_id}");
                         $delete_url = admin_url("admin.php?page=wpcb-booking&action=delete&id={$booking_id}");
                     ?>
                     <tr>
+                        <td><input type="checkbox" class="booking-item" value="<?php echo $booking_id; ?>"/></td>
                         <?php do_action('wpcb_manage_booking_before_column_data', $booking_id); ?>
                         <td>
                         <a class="row-title" href="<?php echo $edit_url ?>"><?php echo get_the_title()?></a>
@@ -82,7 +114,7 @@
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td><?php echo $meta_values['wpcb_customer_name'] ?? '' ?></td>
+                        <td><?php echo $meta_values[wpcb_customer_field('key')] ?? '' ?></td>
                         <td><?php echo $booked_dates_str; ?></td>
                         <td><span class="status"><?php echo $meta_values['wpcb_booking_status'] ?? '' ?></span></td>
                         <td><?php echo get_the_date() ?></td>
@@ -97,8 +129,16 @@
             </tbody>
         </table>
     </div>
-    <div class="calendar-pagination row">
-        <div class="col-md-3 p-1 text-center pr-3">
+    <!-- Bulk Options -->
+    <div class="tablenav bottom">
+        <?php if(!$is_active_booking): ?>
+            <?php echo WPCB_Form::gen_button('', 'Restore', 'button', 'bulk-update-post-status btn-sm btn-info', 'data-status="publish"'); ?>
+        <?php endif; ?>
+        <?php echo WPCB_Form::gen_button('', $bulk_update_label, 'button', 'bulk-update-post-status btn btn-sm btn-danger', $status_attr); ?>
+        <?php do_action('table_nav_bottom'); ?>
+    </div>
+    <div class="calendar-pagination row m-0">
+        <div class="col-md-3 p-0 pt-3 text-center">
             <?php
                 printf(
                     '<p class="note note-primary m-0">Showing %s to %s of %s entries.</p>',
@@ -108,7 +148,6 @@
                 );
             ?>
         </div>
-        <div class="col-md-6"><?php wpcb_bootstrap_pagination(array('custom_query' => $bookings)); ?></div>
-        <div class="col-md-3">
+        <div class="col-md-6 pt-3"><?php wpcb_bootstrap_pagination(array('custom_query' => $bookings)); ?></div>
     </div>
 </div>

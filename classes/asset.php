@@ -18,7 +18,8 @@ class WPCB_Booking_Asset
             wp_enqueue_style('calendar-styles', WPCB_BOOKING_PLUGIN_URL. 'assets/css/calendar.css', array(), WPCB_BOOKING_VERSION);
             wp_enqueue_style('mdb-styles', WPCB_BOOKING_PLUGIN_URL. 'assets/css/custom-mdb.css', array(), WPCB_BOOKING_VERSION);
             wp_enqueue_style('fontawesome', WPCB_BOOKING_PLUGIN_URL. 'assets/css/font-awesome.min.css', array(), WPCB_BOOKING_VERSION);
-            
+            wp_enqueue_style('bootstrap-datetimepicker-css', WPCB_BOOKING_PLUGIN_URL. 'assets/css/bootstrap-datetimepicker.min.css', array(), WPCB_BOOKING_VERSION);
+
             // Scripts
             wp_enqueue_script('bootstrap-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/bootstrap.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('repeater-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/repeater.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
@@ -33,16 +34,15 @@ class WPCB_Booking_Asset
 
             $datetime_picker_format = new stdClass;
             $datetime_picker_format->format = 'hh:mm a';
-            $datetime_picker_format = apply_filters('datetime_picker_format', $datetime_picker_format);
             $date_picker_format = new stdClass;
-            $date_picker_format->format = 'yyyy/mm/dd';
-            $date_picker_format = apply_filters('date_picker_format', $date_picker_format);
+            $date_picker_format->format = wpcb_datepicker_format();
             // Localize
             $translation = array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'datetime_picker_format' => $datetime_picker_format,
                 'date_picker_format' => $date_picker_format,
-                'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? $_POST['wpcb_notification'] : []
+                'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? $_POST['wpcb_notification'] : [],
+                'is_debug' => isset($_GET['debug']) ? 1 : 0
             );
 
             require_once(WPCB_BOOKING_PLUGIN_PATH. 'assets/css-root.php');
@@ -80,10 +80,8 @@ class WPCB_Booking_Asset
 
         $datetime_picker_format = new stdClass;
         $datetime_picker_format->format = 'hh:mm a';
-        $datetime_picker_format = apply_filters('datetime_picker_format', $datetime_picker_format);
         $date_picker_format = new stdClass;
-        $date_picker_format->format = 'yyyy/mm/dd';
-        $date_picker_format = apply_filters('date_picker_format', $date_picker_format);
+        $date_picker_format->format = wpcb_datepicker_format();
         
         // Localize
         $translation = array(
@@ -91,7 +89,9 @@ class WPCB_Booking_Asset
             'is_admin' => is_admin() ? true : false,
             'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? $_POST['wpcb_notification'] : [],
             'datetime_picker_format' => $datetime_picker_format,
-            'date_picker_format' => $date_picker_format
+            'date_picker_format' => $date_picker_format,
+            'customer_field' => wpcb_customer_field(),
+            'is_debug' => isset($_GET['debug']) ? 1 : 0
         );
         wp_localize_script('calendar-admin-js', 'WPCBBookingAjax', $translation);
     }

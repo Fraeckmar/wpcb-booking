@@ -5,6 +5,9 @@ class WPCB_Form
     public static function start($attributes = array())
     {
         $form_attribute = '';
+        if (!array_key_exists('name', $attributes)) {
+            $attributes['name'] = 'wpcb_booking';
+        }
         if (!array_key_exists('method', $attributes)) {
             $attributes['method']= 'post';
         }
@@ -91,7 +94,7 @@ class WPCB_Form
                     $brakets = '[]';
                 }
                 
-                $html_field .= '<select id="'.$key.'" name="'.$field_name.$brakets.'" class="custom-select '.$field_class.'" '.$extras.'>';
+                $html_field .= '<select id="'.$key.'" name="'.$field_name.$brakets.'" class="custom-select '.$field_class.'" placeholder="'.$placeholder.'" '.$extras.'>';
                     $html_field .= '<option value=""> '.$placeholder.' </option>';
                 if (!empty($options) && is_array($options)) {
                     $is_assoc_arr = !array_key_exists(0, $options);
@@ -119,8 +122,12 @@ class WPCB_Form
                 if (!empty($options)) {
                     $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
                     $counter = 0;
-                    foreach ($options as $op_val) {
+                    $is_assoc_arr = !array_key_exists(0, $options);
+                    foreach ($options as $op_val => $op_label) {
                         $counter ++;
+                        if (!$is_assoc_arr) {
+                            $op_val = $op_label;
+                        }
                         if ($type == 'checkbox') {
                             $checked = !empty($value) ? checked(in_array($op_val, $value), 1, false) : '';
                         } else {
@@ -128,10 +135,14 @@ class WPCB_Form
                         }
                         $html_field .= '<div class="form-check '.$group_class.'">';
                             $html_field .= '<input type="'.$type.'" id="'.$key.'-'.$counter.'" name="'.$field_name.'" value="'.$op_val.'" class="form-check-input '.$class.'" '.$extras.' '.$checked.' type="checkbox">';
-                            $html_field .= '<label class="form-check-label" for="'.$key.'-'.$counter.'">'.$op_val.'</label>';
+                            $html_field .= '<label class="form-check-label" for="'.$key.'-'.$counter.'">'.$op_label.'</label>';
                         $html_field .= '</div>';
                     }
                 }
+                break;
+            case 'date':
+                $placeholder = strtolower(wpcb_datepicker_format());
+                $html_field .= '<input type="text" id="'.$key.'" class="'.$field_class.'" name="'.$field_name.'" value="'.$value.'" placeholder="'.$placeholder.'" '.$extras.'/>';
                 break;
             default: 
                 $html_field .= '<input type="'.$type.'" id="'.$key.'" class="'.$field_class.'" name="'.$field_name.'" value="'.$value.'" placeholder="'.$placeholder.'" '.$extras.'/>';
@@ -143,14 +154,14 @@ class WPCB_Form
         return $html_field;
     }
 
-    public static function draw_hidden($name, $value)
+    public static function draw_hidden($name, $value='')
     {
         echo "<input type='hidden' id='{$name}' name='{$name}' value='{$value}'>";
     }
 
     public static function draw_search_field($meta_key, $value, $label='', $placeholder='', $extras='', $form_group=false)
     {
-        $options = [$meta_key => $value];
+        $options = !empty($value) ? [$meta_key => $value] : array();
         $fields = [
             'key' => $meta_key,
             'type' => 'select',

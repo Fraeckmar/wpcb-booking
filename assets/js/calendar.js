@@ -23,8 +23,6 @@ jQuery(document).ready(function($){
         }, 5000);
 	}
 
-    console.log(notification);
-
 	if( notification && notification.length != 0 ){
 		showNotification( notification.message, notification.type, notification.icon );
 	}
@@ -118,8 +116,8 @@ jQuery(document).ready(function($){
 
     function reset_summary()
     {
-        $('body').find('#order-summary #details').html('');
-        $('body').find('#order-summary #total-amount').html(0);
+        // $('body').find('#order-summary #details').html('');
+        // $('body').find('#order-summary #total-amount').html(0);
         $('body').find('#order-summary').addClass('d-none');
     }
 });

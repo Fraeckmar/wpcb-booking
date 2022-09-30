@@ -1,17 +1,16 @@
 <?php
 /*
- * Plugin Name: Online Booking & Notification
- * Plugin URI: http://lerevel-inventory.herokuapp.com
- * Description: Booking Systemt & Notification is a WordPress plug-in designed to provide ideal technology solution for your Cargo and Courier Operations. Whether you are an exporter, freight forwarder, importer, supplier, customs broker, overseas agent, or warehouse operator, WPCBargo helps you to increase the visibility, efficiency, and quality services of your cargo and shipment business.
- * Author: <a href="http://lerevel-inventory.herokuapp.com">Calendar Booking</a>
+ * Plugin Name: Booking Calendar and Notification
+ * Description: Booking Calendar and Notification is a plug-in designed for easy booking to your business. You can set and display your date(s) whether it is avaiable, unavailable or booked and manage booking of your customers.
+ * Author: <a href="https://join.skype.com/invite/yT6ad4cNTTJM">WP Booking Calendar</a>
  * Text Domain: wpcb_booking
  * Domain Path: /languages
  * Version: 3.1.0
  */
 
  /** 
-  * Booking System & Notification
-  * Copyright (C) 2022  Calendar Booking
+  * Booking Calendar and Notification
+  * Copyright (C) 2022  WP Booking Calendar
   */
 
 if (!defined('ABSPATH')) {

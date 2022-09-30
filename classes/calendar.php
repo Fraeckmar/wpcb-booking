@@ -116,7 +116,7 @@ class Calendar {
                             $status =  $calendar_data[$current_date]['status'];
                         }                        
                         if (empty($status)) {
-                            $status = !in_array($day_name, $enable_days) ? 'disabled' : 'available';
+                            $status = !empty($enable_days) && !in_array($day_name, $enable_days) ? 'disabled' : 'available';
                         }
                         $status = apply_filters('wpcb_calendar_status', $status, $current_date, $calendar_data, $this->booking_id);                      
                         $booked_icon_class =  $status == 'booked' ? 'd-block' : 'd-none';

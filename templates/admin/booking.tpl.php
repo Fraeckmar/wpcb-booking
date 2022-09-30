@@ -1,5 +1,5 @@
 <div id="booking-post" class="wrap wpcb-booking">
-    <form method="POST" action="" id="wpcb-booking-admin-form">
+    <form method="POST" action="" id="wpcb-booking-admin-form" class="<?php echo wpcb_get_rate_type(); ?>">
         <?php wp_nonce_field('wpcb_booking_update_nonce_action', 'wpcb_booking_update_nonce_field') ?>
         <h3><?php echo ucwords($action).' Booking'; ?></h3>
         <div class="form-group">
@@ -51,6 +51,7 @@
                 </div>
             </div>
             <div class="col-md-6">
+            <!-- Custom Field Details -->
             <?php if(!empty($form_fields)): ?>
                 <?php foreach($form_fields as $section => $fields): ?>
                     <div class="col-sm-12 mb-4">
@@ -67,7 +68,22 @@
                     </div> 
                 <?php endforeach; ?>
             <?php endif; ?>
+
+            <!-- Order Detetails -->
+            <?php if (!empty($order_html)): ?>
+                <div class="col-sm-12 mb-4">
+                    <div class="card p-0 mw-100">
+                        <div class="card-header"> 
+                            <h5 class="h4 m-0"><?php _e('Order Details', 'wpcb_booking'); ?> </h5>
+                        </div>
+                        <div class="card-body">
+                            <?php echo $order_html; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
             </div>
+            <!-- Status -->
             <div class="col-md-3">
                 <div class="card p-3">
                     <?php echo WPCB_Form::gen_field(array(
@@ -75,12 +91,12 @@
                         'type' => 'select',
                         'label' => '<strong>Status</strong>',
                         'required' => true,
-                        'options' => $wpcb_setting->get_setting('general', 'booking_status_list'),
+                        'options' => $wpcb_setting->wpcb_status_list(),
                         'value' => $booking_id ? get_post_meta($booking_id, 'wpcb_booking_status', true) : ''
                     ), true) ?>
                 </div>
                 <div class="card p-3 text-right">
-                    <button type="submit" class="btn btn-info"><?php _e('Save') ?></button>
+                    <button type="submit" class="btn btn-info"><?php $action == 'new' ? _e('Save', 'wpcb_booking') :  _e('Update', 'wpcb_booking') ?></button>
                 </div>
             </div>
         </div>

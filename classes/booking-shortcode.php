@@ -5,7 +5,7 @@ class Booking_Shortcode
     function __construct()
     {
         add_shortcode('wpcb_booking', array($this, 'wpcb_booking_form'));
-        add_action('wpcb_after_booking_save', array($this, 'wpcb_admin_send_email_notification'), 10, 2);
+        add_action('wpcb_after_booking_send_email', array($this, 'wpcb_admin_send_email_notification'), 10, 2);
         add_action('wpcb_after_booking_save', array($this, 'wpcb_after_booking_save_callback'), 100, 2);
     }
 
@@ -35,15 +35,16 @@ class Booking_Shortcode
                 update_post_meta($booking_id, 'booked_dates', $selected_full_dates);
                 if (!empty($wpcb_booking->fields())) {
                     foreach ($wpcb_booking->fields() as $section => $fields) {
-                        foreach ($fields as $meta_key => $field_info) {
-                            if (array_key_exists($meta_key, $_POST)) {
-                                update_post_meta($booking_id, $meta_key, $_POST[$meta_key]);
+                        foreach ($fields as $field_key => $field) {
+                            if (isset($_POST[$field['key']])) {
+                                update_post_meta($booking_id, $field['key'], $_POST[$field['key']]);
                             }
                         }                        
                     }
                 }
-
-                do_action('wpcb_after_booking_save', $booking_id, $_POST);
+                
+                do_action('wpcb_after_booking_save', $booking_id, $_POST);                
+                do_action('wpcb_after_booking_send_email', $booking_id, $_POST);
                 wpcb_set_notification("Booked Successfully!");
             }
         }
@@ -66,7 +67,7 @@ class Booking_Shortcode
         global $wpcb_setting;
         $page_id = $wpcb_setting->get_setting('general', 'thankyou_page');
         if (function_exists('wpcr_is_enable_payment')) {
-            if (!wpcr_is_enable_payment()) {
+            if (!wpcr_is_enable_payment() && $page_id) {
                 wp_redirect(get_permalink($page_id));
             }            
         } else if ($page_id) {
@@ -76,6 +77,9 @@ class Booking_Shortcode
 
     function wpcb_admin_send_email_notification($booking_id)
     {
+        if (get_post_status($booking_id) != 'publish') {
+            return false;
+        }
         global $wpcb_booking, $wpcb_setting;
         $site_mail = get_option('new_admin_email');
         $shortcode_values = $wpcb_setting->wpcb_get_shortcode_values($booking_id);
@@ -95,7 +99,7 @@ class Booking_Shortcode
                 }
             }            
         }
-        $is_enabled = array_key_exists('admin_enable', $mail_setting) ? $mail_setting['admin_enable'] : false;
+        $is_enabled = array_key_exists('admin_enable', $mail_setting) ? $mail_setting['admin_enable'] : true;
         $mail_to = array_key_exists('admin_mail_to', $mail_setting) ? implode(',', $mail_setting['admin_mail_to']) : '';
         $mail_to = apply_filters('wpcb_admin_mail_to', $mail_to, $booking_id);
         $cc = array_key_exists('admin_cc', $mail_setting) ? implode(',', $mail_setting['admin_cc']) : '';
@@ -103,7 +107,7 @@ class Booking_Shortcode
         $subject = array_key_exists('admin_subject', $mail_setting) ? $mail_setting['admin_subject'] : '';
         $body = array_key_exists('admin_body', $mail_setting) ? $mail_setting['admin_body'] : '';
         $footer = array_key_exists('admin_footer', $mail_setting) ? $mail_setting['admin_footer'] : '';
-        $mail_content = $this->wpcb_construct_mail_body($body, $footer);
+        $mail_content = $wpcb_setting->wpcb_construct_mail_body($body, $footer);
 
         $headers = array();
         $attachments = apply_filters('wpcb_admin_mail_attachments', array(), $booking_id);
@@ -118,21 +122,6 @@ class Booking_Shortcode
         if ($is_enabled && !empty($mail_to)) {
             wp_mail($mail_to, $subject, $mail_content, $headers, $attachments);
         }
-    }
-
-    function wpcb_construct_mail_body($email_body, $email_footer)
-    {
-        $content = "<div class='wpc-email-notification-wrap' style='width: 100%; font-family: sans-serif;'>";
-            $content .= "<div class='wpc-email-notification' style='padding: 3em; background: #efefef;'>";
-                $content .= "<div class='wpc-email-notification-content' style='padding: 2em 2em 1em 2em; font-size: 18px;'>";
-                    $content .= $email_body;
-                $content .= "</div>";
-                $content .= "<div class='wpc-email-notification-footer' style='font-size: 10px; text-align: center; margin: 0 auto;'>";
-                    $content .= $email_footer;
-                $content .= "</div>";
-            $content .= "</div>";
-        $content .= "</div>";
-    return $content;
     }
 }
 $booking_shortcode = new Booking_Shortcode();

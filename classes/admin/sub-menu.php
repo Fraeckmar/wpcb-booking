@@ -16,7 +16,8 @@ class WPCB_Sub_Menu
             'manage_options',
             'wpcb-booking',
             array($this, 'wpcb_online_booking_callback'),
-            'dashicons-calendar'
+            'dashicons-calendar',
+            3
         );
 
         // Manage Booking
@@ -48,7 +49,15 @@ class WPCB_Sub_Menu
             array($this, 'wpcb_calendars_callback')
         );
 
-        
+        // Reports
+        add_submenu_page(
+            'wpcb-booking',
+            __('Generate Report', 'wpcb_booking'),
+            __('Generate Report', 'wpcb_booking'),
+            'manage_options',
+            'wpcb-report',
+            array($this, 'wpcb_report_callback')
+        );
     }
 
     function wpcb_manage_booking_display_notif()
@@ -77,9 +86,12 @@ class WPCB_Sub_Menu
         $is_active_booking = !in_array($action, array('untrash', 'delete')) && !in_array($status, array('trash', 'untrash')) ? true : false;
 
         if (in_array($action, array('new', 'edit'))) {
+            $order_id = get_post_meta($booking_id, 'order_id', true);
             $calendar_list = wpcb_get_calendar_list();
             $form_fields = !empty($wpcb_booking->fields()) ? $wpcb_booking->fields($booking_id) : array();
-            $title = $action == 'edit' ? get_the_title($booking_id) : '';           
+            $title = $action == 'edit' ? get_the_title($booking_id) : '';   
+
+            $order_html = $booking_id && function_exists('wpcr_get_order_details_html') ? wpcr_get_order_details_html($booking_id) : '';
             require_once(wpcb_get_template('booking.tpl', true));
         } else {
             if (in_array($action, array('trash', 'untrash', 'restore')) && $booking_id) {
@@ -92,16 +104,28 @@ class WPCB_Sub_Menu
             }
 
             $q_booking = isset($_POST['q_booking']) ? $_POST['q_booking']  : '';
-            $q_customer_name = isset($_POST['wpcb_customer_name']) ? $_POST['wpcb_customer_name'] : '';
-            $post_per_page = isset($_POST['wpcb_per_page']) ? $_POST['wpcb_per_page']  : 10; 
+            $q_customer_name = isset($_POST[wpcb_customer_field('key')]) ? $_POST[wpcb_customer_field('key')] : '';
+            $q_wpcb_booking_status = isset($_POST['wpcb_booking_status']) ? $_POST['wpcb_booking_status'] : '';
+            $date_from = isset($_POST['date_from']) ? $_POST['date_from'] : '';
+            $date_to = isset($_POST['date_to']) ? $_POST['date_to'] : '';
+            $post_per_page = isset($_GET['post_per_page']) && !empty($_GET['post_per_page']) ? $_GET['post_per_page']  : 10;
+            $entries_options = array(10, 25, 50);
             $meta_query = array();
             if (!empty($q_customer_name)) {
                 $meta_query[] = array(
-                    'key' => 'wpcb_customer_name',
+                    'key' => wpcb_customer_field('key'),
                     'value' => $q_customer_name,
                     'compare' => '='
                 );
             }
+            if (!empty($q_wpcb_booking_status)) {
+                $meta_query[] = array(
+                    'key' => 'wpcb_booking_status',
+                    'value' => $q_wpcb_booking_status,
+                    'compare' => '='
+                );
+            }
+            
             $meta_query = apply_filters( 'wpcb_manage_booking_meta_query', $meta_query);
             $paged = isset($_GET['paged']) && is_numeric($_GET['paged']) ? $_GET['paged'] : 1; 
             $active_args = array(
@@ -115,6 +139,25 @@ class WPCB_Sub_Menu
                     $meta_query
                 )
             );
+
+            if (!empty($date_from) || !empty($date_to)) {
+                $active_args['date_query'] = array();
+                if (!empty($date_from)) {
+                    $active_args['date_query']['after'] = array(
+                        'year' => date('Y', strtotime($date_from)),
+                        'month' => date('m', strtotime($date_from)),
+                        'day' => date('d', strtotime($date_from))
+                    );
+                }
+                if (!empty($date_to)) {
+                    $active_args['date_query']['before'] = array(
+                        'year' => date('Y', strtotime($date_to)),
+                        'month' => date('m', strtotime($date_to)),
+                        'day' => date('d', strtotime($date_to))
+                    );
+                }
+                $active_args['date_query']['inclusive'] = true;
+            }
 
             $trash_args = array(
                 'post_type'         => 'wpcb_booking',
@@ -134,6 +177,8 @@ class WPCB_Sub_Menu
             $basis = $paged * $post_per_page;
             $record_end     = $number_records < $basis ? $number_records : $basis ;
             $record_start   = $basis - ( $post_per_page - 1 );   
+            $bulk_update_label = $is_active_booking ? 'Bulk Trash' : 'Bulk Delete';
+            $status_attr = $is_active_booking ? 'data-status="trash"' : 'data-status="delete"';
             $template = wpcb_get_template('manage-booking.tpl', true);
             require_once $template;
         }
@@ -210,7 +255,7 @@ class WPCB_Sub_Menu
             }       
             
             $s_calendar = isset($_POST['s']) ? $_POST['s']  : '';
-            $post_per_page = isset($_POST['wpcb_per_page']) ? $_POST['wpcb_per_page']  : 10;
+            $post_per_page = isset($_POST['post_per_page']) && !empty($_POST['post_per_page']) ? $_POST['post_per_page']  : -1;
             $meta_query = array();	    
             $meta_query = apply_filters( 'wpcb_booking_calendar_meta_query', $meta_query );
             $active_args = array(
@@ -240,6 +285,15 @@ class WPCB_Sub_Menu
             $wpcb_calendars = $status == 'trash' ? $trash_calendars : $active_calendars;
             require_once(WPCB_BOOKING_PLUGIN_PATH. 'templates/admin/calendars.php');
         }
+    }
+
+    function wpcb_report_callback()
+    {
+        $customer_name = isset($_POST['wpcb_customer_name']) ? $_POST['wpcb_customer_name'] : '';
+        $wpcb_booking_status = isset($_POST['wpcb_booking_status']) ? $_POST['wpcb_booking_status'] : '';
+        $date_from = isset($_POST['date_from']) ? $_POST['date_from'] : '';
+        $date_to = isset($_POST['date_to']) ? $_POST['date_to'] : '';
+        require_once(WPCB_BOOKING_PLUGIN_PATH. 'templates/admin/report.php');
     }
 }
 

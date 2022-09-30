@@ -1,4 +1,6 @@
 jQuery(document).ready(function($){
+    const customer_field = WPCBBookingAjax.customer_field;
+
     var base_url = window.location.href.split('&')[0];
     $('.wpcb-color-field').wpColorPicker();
     $('#wpcb-navigation').on('click', '.btn', function(){
@@ -37,7 +39,7 @@ jQuery(document).ready(function($){
         $(this).find('.modal-title').text('Day '+date_day);
     });
 
-    $('body').on('hidden.bs.modal', '.calendar .modal', function(e){
+    $('#calendar-post').on('hidden.bs.modal', '.calendar .modal', function(e){
         let status = $(this).find('.status:checked').val();
         let day_num = $(this).closest('.day_num');
         let booked_icon_class = status == 'booked' ? 'd-block' : 'd-none';
@@ -77,6 +79,104 @@ jQuery(document).ready(function($){
         let formated_date = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
         if (calendar_id) {
             update_calendar(formated_date, calendar_id);
+        }
+    });
+
+    // Manage Booking
+    $('#post_per_page').on('change', function(){
+        if ($(this).val()) {
+            $(this).closest('form').trigger('submit');
+        }
+    });
+
+    $('.all-booking').on('click', function(){
+        $(this).closest('table').find('.booking-item').prop('checked', $(this).prop('checked'));
+    });
+
+    $('.bulk-update-post-status').on('click', function(){
+        let status = $(this).data('status');
+        let booking_ids = [];
+        $('#booking-list .booking-item:checked').each(function(){
+            if ($(this).val()) {
+                booking_ids.push($(this).val());
+            }            
+        });
+        if (!booking_ids.length) {
+            showNotification('Please select booking(s) to delete.', 'danger', 'info');
+            return false;
+        }
+        if (!status) {
+            showNotification('Status is not set for this action.', 'danger', 'info');
+            return false;
+        }
+        if (confirm('Are you sure to '+status+' the selected booking(s)?')) {
+            $.post({
+                url: WPCBBookingAjax.ajaxurl,
+                data: {
+                    action: 'wpcb_bulk_trash_booking',
+                    booking_ids,
+                    status
+                },
+                beforeSend: function() {
+                    wpcb_show_loading();
+                },
+                success: function(response) {
+                    if (WPCBBookingAjax.is_debug != 0) {
+                        console.log(response);
+                    }                    
+                    data = JSON.parse(response);
+                    if (data.status == 'error') {
+                        showNotification(data.error, 'danger', 'info');
+                    } else {
+                        showNotification(data.msg, 'success', 'info');
+                        $('#booking-list-table').find('.booking-item').each(function(){
+                            if ($.inArray($(this).val(), booking_ids) !== -1) {
+                                $(this).closest('tr').remove();
+                            }
+                        });
+                    }
+                    wpcb_hide_loading();
+                }
+            });
+        }
+        
+    });
+
+    // Generate Report
+    $('#wpcb_export_form').on('submit', function(e){
+        e.preventDefault();
+        let date_from = $(this).find('#date_from').val();
+        let date_to = $(this).find('#date_to').val();
+        let status = $(this).find('#wpcb_booking_status').val();
+        let customer = $(this).find('#'+customer_field.key).val();
+
+        if (date_from && date_to) {
+            $.post({
+                url: WPCBBookingAjax.ajaxurl,
+                data: {
+                    action: 'wpcb_generate_report',
+                    date_from,
+                    date_to,
+                    status,
+                    customer
+                },
+                beforeSend: function() {
+                    wpcb_show_loading();
+                },
+                success: function(response) {
+                    data = JSON.parse(response);
+                    $('#wpcb_export_form .alert').removeClass('d-none alert-danger alert-success');
+                    if (data.status == 'error') {
+                        $('#wpcb_export_form .alert').addClass('alert-danger');
+                        $('#wpcb_export_form .alert').html(data.error);
+                    } else {
+                        $('#wpcb_export_form .alert').addClass('alert-success');
+                        $('#wpcb_export_form .alert').html(data.msg);
+                        window.open(data.file_url, '_blank');
+                    }
+                    wpcb_hide_loading();
+                }
+            });
         }
     });
 });

@@ -44,7 +44,7 @@
                     <?php endif; ?>
                 <?php endforeach; ?>
             <?php endif; ?>
-            <?php do_action('wpcb_after_booking_info') ?>          
+            <?php do_action('wpcb_after_booking_info', $calendar_id); ?>          
             <div class="col-12">
                 <button class="btn btn-primary waves-effect w-100 m-0"><?php _e('SUBMIT'); ?></button>
             </div>

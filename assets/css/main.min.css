@@ -10181,3 +10181,6 @@
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
+.wpcb-booking .show {
+  opacity: 1;
+}

@@ -5,7 +5,7 @@ jQuery(document).ready(function($){
     $('.wpcb-timepicker').datetimepicker(datetime_picker_format);
     $('.wpcb-datepicker').datetimepicker(date_picker_format);
 
-    $('.wpcb-booking').on('keydown', '.wpcb-timepicker', function(){
+    $('.wpcb-booking').on('keydown', '.wpcb-timepicker, .wpcb-datepicker', function(){
         return false;
     });
 });

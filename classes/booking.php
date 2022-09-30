@@ -3,42 +3,38 @@
 class WPCB_Booking {
     public function fields($booking_id=0)
     {
-        $wpcb_name = '';
-        $wpcb_email = '';
-        $wpcb_phone_number = '';
-        if ($booking_id) {
-            $wpcb_name = get_post_meta($booking_id, 'wpcb_name', true);
-            $wpcb_email = get_post_meta($booking_id, 'wpcb_email', true);
-            $wpcb_phone_number = get_post_meta($booking_id, 'wpcb_phone_number', true);
-        }
+        $wpcb_customer_name = $booking_id ? get_post_meta($booking_id, 'wpcb_customer_name', true) : '';
+        $wpcb_customer_email = $booking_id ? get_post_meta($booking_id, 'wpcb_customer_email', true) : '';
+        $wpcb_customer_phone_number = $booking_id ? get_post_meta($booking_id, 'wpcb_customer_phone_number', true) : '';
+
         $wpcb_booking_fields = array(
             'Personal Information' => array(
-                'customer_name' => array(
-                    'key' => 'wpcb_name',
+                'wpcb_customer_name' => array(
+                    'key' => 'wpcb_customer_name',
                     'label' => __('Name', 'wpcb_booking'),
                     'type' => 'text',
                     'required' => true,
                     'placeholder' => 'Your full name',
                     'options' => array(),
-                    'value' => $wpcb_name
+                    'value' => $wpcb_customer_name
                 ),
-                'customer_email' => array(
-                    'key' => 'wpcb_email',
+                'wpcb_customer_email' => array(
+                    'key' => 'wpcb_customer_email',
                     'label' => __('Email', 'wpcb_booking'),
                     'type' => 'email',
                     'required' => true,
                     'placeholder' => 'example@gmail.com',
                     'options' => array(),
-                    'value' => $wpcb_email
+                    'value' => $wpcb_customer_email
                 ),
-                'customer_phone_number' => array(
-                    'key' => 'wpcb_phone_number',
+                'wpcb_customer_phone_number' => array(
+                    'key' => 'wpcb_customer_phone_number',
                     'label' => __('Phone Number', 'wpcb_booking'),
                     'type' => 'text',
                     'required' => true,
                     'placeholder' => '',
                     'options' => array(),
-                    'value' => $wpcb_phone_number
+                    'value' => $wpcb_customer_phone_number
                 )
             )
         );
@@ -57,7 +53,7 @@ class WPCB_Booking {
             'radio' => 'form-check-input',
             'link' => 'btn btn-link',
             'button' => 'btn btn-primary',
-            'date' => 'form-control date_picker w-md-50 w-sm-100'
+            'date' => 'form-control wpcb-datepicker'
         );
         return apply_filters('wpcb_booking_field_class', $field_class);
     }
