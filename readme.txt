@@ -5,7 +5,7 @@ Donate link: paypal.me/mica0215Orellabac
 Tags: booking, online booking, reservation, booking system, calendar, calendar notification
 Tested up to: 6.0.2
 Requires PHP: 5.0 or newer
-Stable tag: 3.1.0
+Stable tag: 3.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
