@@ -13,8 +13,8 @@ class Booking_Shortcode
     {
         global $wpcb_booking;
         if (isset($_POST['wpcb_booking_nonce_field']) && wp_verify_nonce($_POST['wpcb_booking_nonce_field'], 'wpcb_booking_nonce_action')) {
-            $calendar_id = isset($_POST['calendar_id']) ? $_POST['calendar_id'] : 0;
-            $year_month = isset($_POST['year_month']) ? $_POST['year_month'] : '';
+            $calendar_id = isset($_POST['calendar_id']) && is_numeric($_POST['calendar_id']) ? esc_attr($_POST['calendar_id']) : 0;
+            $year_month = isset($_POST['year_month']) ? esc_attr($_POST['year_month']) : '';
             $selected_dates = isset($_POST['dates']) ? $_POST['dates'] : [];
             $selected_full_dates = [];
             $post_args = array(

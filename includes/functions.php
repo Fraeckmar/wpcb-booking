@@ -16,6 +16,10 @@ function wpcb_woo_is_active()
 {
     return class_exists('woocommerce');
 }
+function wpcb_plugin_slug()
+{
+    return 'manage-booking';
+}
 function dd($data, $die=false)
 {
     if (isset($_GET['debug'])) {
@@ -168,38 +172,35 @@ function wpcb_draw_date_modal($calendar_id, $date, $day)
         $status = !in_array($day_name, $enabled_days) ? 'unavailable' : 'available';
     }
     $description = wpcb_get_date_value($calendar_id, $date, 'description');
-    echo "<div class='modal fade text-left' id='modal-day-{$day}' tabindex='-1' role='dialog' aria-labelledby='dateModalLabel-{$day}' aria-hidden='true'>";
+    echo "<div class='modal status-modal fade text-left' id='modal-day-{$day}' data-bs-backdrop='static' role='dialog' aria-labelledby='dateModalLabel-{$day}' aria-hidden='true'>";
         echo "<div class='modal-dialog modal-dialog-centered'>";
             echo "<div class='modal-content'>";
                 echo "<div class='modal-header'>";
                     echo "<h5 class='modal-title' id='dateModalLabel-{$day}'></h5>";
-                    //echo "<button type='button' class='close' data-dismiss='modal' aria-label='Close'>";
-                        //echo "<span aria-hidden='true'>&times;</span>";
-                    //echo "</button>";
                 echo "</div>";
                 echo "<div class='modal-body'>";
                     echo "<div class='form-group'>";
                         echo "<div class='form-check form-check-inline'>";
                             echo "<input type='radio' id='available-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='available' ".checked($status == 'available', 1, false)."/>";
-                            echo "<label for='available-{$day}' class='form-check-label'>".__('Available')."</label>";
+                            echo "<label for='available-{$day}' class='form-check-label'>".esc_html__('Available')."</label>";
                         echo "</div>";
                         echo "<div class='form-check form-check-inline'>";
                             echo "<input type='radio' id='unavailable-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='unavailable' ".checked($status == 'unavailable', 1, false)."/>";
-                            echo "<label for='unavailable-{$day}' class='form-check-label'>".__('Unavailable')."</label>";
+                            echo "<label for='unavailable-{$day}' class='form-check-label'>".esc_html__('Unavailable')."</label>";
                         echo "</div>";
                         echo "<div class='form-check form-check-inline'>";
                             echo "<input type='radio' id='booked-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='booked' ".checked($status == 'booked', 1, false)."/>";
-                            echo "<label for='booked-{$day}' class='form-check-label'>".__('Booked')."</label>";
+                            echo "<label for='booked-{$day}' class='form-check-label'>".esc_html__('Booked')."</label>";
                         echo "</div>";
                     echo "</div>";
                     echo "<div class='form-group'>";
                         echo "<input type='hidden' class='date-day' value='{$day}' />";
-                        echo "<label for='description-{$date}'>".__('Description')."</label>";
+                        echo "<label for='description-{$date}'>".esc_html__('Description')."</label>";
                         echo "<textarea id='description-{$date}' class='form-control' name='dates[{$date}][description]'>{$description}</textarea>";
                     echo "</div>";
                 echo "</div>";
                 echo "<div class='modal-footer'>";
-                    echo "<button type='button' class='btn btn-sm btn-primary' data-dismiss='modal' aria-label='Close'>".__('OK', 'wpcb_calendar')."</button>";
+                    echo "<button type='button' class='btn btn-sm btn-primary' data-bs-dismiss='modal' aria-label='Close'>".esc_html__('OK', 'wpcb_calendar')."</button>";
                 echo "</div>";
             echo "</div>";
         echo "</div>";
@@ -461,9 +462,9 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     $defaults = array(
         'range'           => 4,
         'custom_query'    => FALSE,
-        'previous_string' => __( 'Previous', 'wpcb_booking' ),
-        'next_string'     => __( 'Next', 'wpcb_booking' ),
-        'before_output'   => '<nav class="post-nav" aria-label="'.__('Booking Pagination', 'wpcb_booking').'"><ul class="pagination pg-blue justify-content-center">',
+        'previous_string' => esc_html__( 'Previous', 'wpcb_booking' ),
+        'next_string'     => esc_html__( 'Next', 'wpcb_booking' ),
+        'before_output'   => '<nav class="post-nav" aria-label="'.esc_html__('Booking Pagination', 'wpcb_booking').'"><ul class="pagination pg-blue justify-content-center">',
         'after_output'    => '</ul></nav>'
     );
     
@@ -507,10 +508,10 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     
     $firstpage = esc_attr( get_pagenum_link(1) );
     if ( $firstpage && (1 != $page) ) {
-        $echo .= '<li class="previous page-item"><a class="page-link waves-effect waves-effect" href="' . $firstpage . '">' . __( 'First', 'wpcb_booking' ) . '</a></li>';
+        $echo .= '<li class="previous page-item"><a class="page-link waves-effect waves-effect" href="' . $firstpage . '">' . esc_html__( 'First', 'wpcb_booking' ) . '</a></li>';
     }
     if ( $previous && (1 != $page) ) {
-        $echo .= '<li class="page-item" ><a class="page-link waves-effect waves-effect" href="' . $previous . '" title="' . __( 'previous', 'wpcb_booking') . '">' . $args['previous_string'] . '</a></li>';
+        $echo .= '<li class="page-item" ><a class="page-link waves-effect waves-effect" href="' . $previous . '" title="' . esc_html__( 'previous', 'wpcb_booking') . '">' . $args['previous_string'] . '</a></li>';
     }
     
     if ( !empty($min) && !empty($max) ) {
@@ -526,12 +527,12 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     $next = intval($page) + 1;
     $next = esc_attr( get_pagenum_link($next) );
     if ($next && ($count != $page) ) {
-        $echo .= '<li class="page-item"><a class="page-link waves-effect waves-effect" href="' . $next . '" title="' . __( 'next', 'wpcb_booking') . '">' . $args['next_string'] . '</a></li>';
+        $echo .= '<li class="page-item"><a class="page-link waves-effect waves-effect" href="' . $next . '" title="' . esc_html__( 'next', 'wpcb_booking') . '">' . $args['next_string'] . '</a></li>';
     }
     
     $lastpage = esc_attr( get_pagenum_link($count) );
     if ( $lastpage ) {
-        $echo .= '<li class="next page-item"><a class="page-link waves-effect waves-effect" href="' . $lastpage . '">' . __( 'Last', 'wpcb_booking' ) . '</a></li>';
+        $echo .= '<li class="next page-item"><a class="page-link waves-effect waves-effect" href="' . $lastpage . '">' . esc_html__( 'Last', 'wpcb_booking' ) . '</a></li>';
     }
     if ( isset($echo) ) {
         echo $args['before_output'] . $echo . $args['after_output'];

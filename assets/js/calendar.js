@@ -3,7 +3,8 @@ jQuery(document).ready(function($){
     var is_admin = WPCBBookingAjax.is_admin;
     var notification = WPCBBookingAjax.notification;
     var loading_html = '<div class="wpcb-loading text-info text-center h3"> <span class="spinner-grow spinner-border-sm"></span></div>';
-    
+    const calendarDateModal = $('body').find('#calendar-modal').length ? new bootstrap.Modal('#calendar-modal', {  keyboard: false }) : {};
+
     window.wpcb_show_loading = function() {
         $('.wpcb-booking').append(loading_html);
     }
@@ -33,7 +34,7 @@ jQuery(document).ready(function($){
         modal.find('.option').addClass('d-none');
         modal.find(display_option).removeClass('animate-scale');
         modal.find(display_option).removeClass('d-none');
-        modal.modal('show');
+        calendarDateModal.show();
         setTimeout(function(){
             modal.find(display_option).addClass('animate-scale');
         }, 100);
@@ -84,10 +85,8 @@ jQuery(document).ready(function($){
         let booking_id = $('#booking_id').val();
         update_calendar(date, calendar_id, booking_id);
     });
-
-
-    $('.calendar').on('click', '.go-to-date .option .item', function(){
-        let modal = $('.calendar').find('#calendar-modal');
+     
+    $('.calendar').on('click', '.go-to-date .option .item', function(){ 
         let calendar_id = $('.calendar').find('#calendar_id').val();
         let booking_id = $('.calendar').find('#booking_id').val();
         let value = $(this).data('value');
@@ -98,7 +97,7 @@ jQuery(document).ready(function($){
         if (next != 'done') {
             display_goto_dates(next);
         } else {
-            modal.modal('hide');
+            calendarDateModal.hide();
             let goto_year = $('#go_to_date').data('year');
             let goto_month = $('#go_to_date').data('month');
             let goto_date = goto_year+'-'+goto_month;
@@ -116,8 +115,24 @@ jQuery(document).ready(function($){
 
     function reset_summary()
     {
-        // $('body').find('#order-summary #details').html('');
-        // $('body').find('#order-summary #total-amount').html(0);
         $('body').find('#order-summary').addClass('d-none');
     }
+
+    $('.calendar').on('mouseover', '.day_num', function(){
+        let width = {};
+        $('.calendar').find('.date-tool-tip').hide();
+        $(this).find('.date-tool-tip').show();
+        $(this).find('.date-tool-tip').css({'padding': '0 5px'});
+        let desc = $(this).find('.descryption').text();
+        if (desc.length < 25) {
+            width = {'width':'auto'};
+        }
+        if (desc.length > 25 && desc.length < 115) {
+            let width_val = (parseInt(desc.length) * 2)+'px';
+            width = {'width': width_val};
+        }
+        if (width) {
+            $(this).find('.date-tool-tip').css(width);
+        }
+    });
 });

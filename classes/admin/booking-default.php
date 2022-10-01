@@ -8,7 +8,7 @@ class WPCB_Booking_Admin
 		$calender_id = $wpdb->get_var( $wpdb->prepare( $sql, 'wpcb_calendar') );
 		if (!$calender_id) {
 			$calendar_agrs = array(
-				'post_title'    => 'Sample Calendar',
+				'post_title'    => esc_html('Sample Calendar'),
 				'post_name' => 'sample-calendar',
 				'post_type'     => 'wpcb_calendar',
 				'post_status'   => 'publish',

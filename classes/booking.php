@@ -11,7 +11,7 @@ class WPCB_Booking {
             'Personal Information' => array(
                 'wpcb_customer_name' => array(
                     'key' => 'wpcb_customer_name',
-                    'label' => __('Name', 'wpcb_booking'),
+                    'label' => esc_html__('Name', 'wpcb_booking'),
                     'type' => 'text',
                     'required' => true,
                     'placeholder' => 'Your full name',
@@ -20,7 +20,7 @@ class WPCB_Booking {
                 ),
                 'wpcb_customer_email' => array(
                     'key' => 'wpcb_customer_email',
-                    'label' => __('Email', 'wpcb_booking'),
+                    'label' => esc_html__('Email', 'wpcb_booking'),
                     'type' => 'email',
                     'required' => true,
                     'placeholder' => 'example@gmail.com',
@@ -29,7 +29,7 @@ class WPCB_Booking {
                 ),
                 'wpcb_customer_phone_number' => array(
                     'key' => 'wpcb_customer_phone_number',
-                    'label' => __('Phone Number', 'wpcb_booking'),
+                    'label' => esc_html__('Phone Number', 'wpcb_booking'),
                     'type' => 'text',
                     'required' => true,
                     'placeholder' => '',

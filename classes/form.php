@@ -45,7 +45,7 @@ class WPCB_Form
         if (empty($field)) { return false; }
         $label = array_key_exists('label', $field) ? $field['label'] : '';
         $type = array_key_exists('type', $field) ? $field['type'] : '';
-        $key = array_key_exists('key', $field) ? $field['key'] : '';
+        $key = array_key_exists('key', $field) ? sanitize_key($field['key']) : '';
         $value = array_key_exists('value', $field) ? $field['value'] : '';
         $placeholder = array_key_exists('placeholder', $field) ? $field['placeholder'] : '';
         $class = array_key_exists('class', $field) ? $field['class'] : '';

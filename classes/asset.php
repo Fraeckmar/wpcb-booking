@@ -82,7 +82,6 @@ class WPCB_Booking_Asset
         $datetime_picker_format->format = 'hh:mm a';
         $date_picker_format = new stdClass;
         $date_picker_format->format = wpcb_datepicker_format();
-        
         // Localize
         $translation = array(
             'ajaxurl' => admin_url('admin-ajax.php'),

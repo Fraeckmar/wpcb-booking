@@ -10,18 +10,18 @@
             </div>
             <div class="col-12 mb-5">
                 <div id="legend-status" class="d-flex">
-                    <p class="h4 mr-2"><?php _e('Legend', 'wpcb_booking') ?>: </p>
+                    <p class="h4 mr-2"><?php esc_html_e('Legend', 'wpcb_booking') ?>: </p>
                     <div class="available d-flex mb-1">
                         <div class="color-code mr-1"></div>
-                        <div> <?php _e('Available', 'wpcb_booking'); ?> </div>
+                        <div> <?php esc_html_e('Available', 'wpcb_booking'); ?> </div>
                     </div>
                     <div class="unavailable d-flex mb-1 mx-3">
                         <div class="color-code mr-1"></div>
-                        <div> <?php _e('Unavailable', 'wpcb_booking'); ?> </div>
+                        <div> <?php esc_html_e('Unavailable', 'wpcb_booking'); ?> </div>
                     </div>
                     <div class="booked d-flex mb-1">
                         <div class="color-code mr-1"><i class="fa fa-check"></i></div>
-                        <div> <?php _e('Booked', 'wpcb_booking'); ?> </div>                    
+                        <div> <?php esc_html_e('Booked', 'wpcb_booking'); ?> </div>                    
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
             <?php endif; ?>
             <?php do_action('wpcb_after_booking_info', $calendar_id); ?>          
             <div class="col-12">
-                <button class="btn btn-primary waves-effect w-100 m-0"><?php _e('SUBMIT'); ?></button>
+                <button class="btn btn-primary waves-effect w-100 m-0"><?php esc_html_e('SUBMIT'); ?></button>
             </div>
         </div>
     </form>

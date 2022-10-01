@@ -15,8 +15,6 @@ class WPCB_Setting{
                 foreach ($_POST as $key => $value) {
                     if (in_array($key, $this->setting_keys()) && !empty($value)) {
                         $this->update_setting($key, $value);
-                        // dd("key: {$key}");
-                        // dd($value);
                     }
                 }
             }
@@ -25,11 +23,11 @@ class WPCB_Setting{
 
         // Save calendar
         if (isset($_POST['wpcb_calendar_update_field']) && wp_verify_nonce($_POST['wpcb_calendar_update_field'], 'wpcb_calendar_update_action')) {
-            $calendar_id = isset($_GET['id']) ? $_GET['id'] : 0;
-            $action = isset($_GET['action']) ? $_GET['action'] : '';
+            $calendar_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
+            $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';
             if ($action) {
                 $post_args = array(
-                    'post_title' => $_POST['post_title']
+                    'post_title' => sanitize_text_field($_POST['post_title'])
                 );
 
                 if ($action == 'edit') {
@@ -48,7 +46,7 @@ class WPCB_Setting{
                 }
                 
                 $form_fields = wpcb_admin_calendar_form_fields();
-                $year_month = isset($_POST['year_month']) ? $_POST['year_month'] : '';
+                $year_month = isset($_POST['year_month']) ? sanitize_text_field($_POST['year_month']) : '';
                 if ($calendar_id) {                
                     if (!empty($form_fields) && !empty($year_month)) {
                         foreach ($form_fields as $field_key => $fields) {
@@ -71,7 +69,7 @@ class WPCB_Setting{
 
             do_action('wpcb_after_save_calendar', $_POST);
             if ($action == 'new') {
-                wp_redirect(admin_url("admin.php?page=wpcb-calendar&action=edit&id={$calendar_id}"));
+                wp_redirect(esc_url(admin_url("admin.php?page=wpcb-calendar&action=edit&id={$calendar_id}")));
             }            
         }
 
@@ -80,12 +78,12 @@ class WPCB_Setting{
             && wp_verify_nonce($_POST['wpcb_booking_update_nonce_field'], 'wpcb_booking_update_nonce_action')
         ) {
             $booking_fields = $wpcb_booking->fields();
-            $booking_id = isset($_GET['id']) ? $_GET['id'] : 0;
+            $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
             $calendar_id = $booking_id ? get_post_meta($booking_id, 'calendar_id', true) : 0;
-            $action = isset($_GET['action']) ? $_GET['action'] : '';
+            $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';
             if ($action) {
                 $post_args = array(
-                    'post_title' => $_POST['post_title']
+                    'post_title' => sanitize_text_field($_POST['post_title'])
                 );
 
                 if ($action == 'edit') {
@@ -103,9 +101,9 @@ class WPCB_Setting{
 
                     if ($calendar_id && $booking_id) {
                         $selected_full_dates = [];
-                        $year_month = isset($_POST['year_month']) ? $_POST['year_month'] : '';
+                        $year_month = isset($_POST['year_month']) ? sanitize_text_field($_POST['year_month']) : '';
                         $calendar_dates = wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $_POST);
-                        $selected_dates = isset($_POST['dates']) ? $_POST['dates'] : [];
+                        $selected_dates = isset($_POST['dates']) ? sanitize_text_field($_POST['dates']) : [];
                         if (!empty($selected_dates)) {
                             foreach ($selected_dates as $selected_date) {
                                 $_date = date(wpcb_date_format(), strtotime("{$year_month}-{$selected_date}"));
@@ -122,13 +120,17 @@ class WPCB_Setting{
                         foreach ($booking_fields as $section => $fields) {
                             foreach ($fields as $field_key => $field) {
                                 if (isset($_POST[$field['key']])) {
-                                    update_post_meta($booking_id, $field['key'], $_POST[$field['key']]);
+                                    $meta_value = $_POST[$field['key']];
+                                    if (in_array($field['type'], ['text','textarea','number','email','url'])) {
+                                        $meta_value = sanitize_text_field($_POST[$field['key']]);
+                                    }
+                                    update_post_meta($booking_id, sanitize_key($field['key']), $meta_value);
                                 }
                             }
                         }
                     }
                     if (isset($_POST['wpcb_booking_status'])) {
-                        update_post_meta($booking_id, 'wpcb_booking_status', $_POST['wpcb_booking_status']);
+                        update_post_meta($booking_id, 'wpcb_booking_status', sanitize_text_field($_POST['wpcb_booking_status']));
                     }
                     do_action('wpcb_after_save_booking_post', $booking_id, $_POST);
                     $notif_action = $action == 'edit' ? 'updated' : 'added';
@@ -176,13 +178,13 @@ class WPCB_Setting{
     {
         $setting_menus = array(
             'general' => array(
-                'label' => __('General Setting', 'wpcb_booking'),
+                'label' => esc_html__('General Setting', 'wpcb_booking'),
                 'file_path' => wpcb_get_template('general-setting.tpl', true),
                 'has_form' => true,
                 'in_save_setting' => true
             ),
             'email' => array(
-                'label' => __('Email Setting', 'wpcb_booking'),
+                'label' => esc_html__('Email Setting', 'wpcb_booking'),
                 'file_path' => wpcb_get_template('email-setting.tpl', true),
                 'has_form' => true,
                 'in_save_setting' => true
@@ -216,7 +218,7 @@ class WPCB_Setting{
                     'fields' => array(
                         array(
                             'key' => 'company_logo',
-                            'label' => __('Company Logo', 'wpcb_booking'),
+                            'label' => esc_html__('Company Logo', 'wpcb_booking'),
                             'placeholder' => 'https://www.yourdomain.com/image/sample.jpg',
                             'description' => 'Image url only.',
                             'type' => 'text',
@@ -227,7 +229,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'thankyou_page',
-                            'label' => __('Thank you Page', 'wpcb_booking'),
+                            'label' => esc_html__('Thank you Page', 'wpcb_booking'),
                             'type' => 'select',
                             'required' => false,
                             'class' => 'form-control selectize',
@@ -238,11 +240,11 @@ class WPCB_Setting{
                     )
                 ),
                 array(
-                    'heading' => __('Calendar', 'wpcb_booking'),
+                    'heading' => esc_html__('Calendar', 'wpcb_booking'),
                     'fields' => array(
                         array(
                             'key' => 'day_name_font_size',
-                            'label' => __('Day name font size (px)', 'wpcb_booking'),
+                            'label' => esc_html__('Day name font size (px)', 'wpcb_booking'),
                             'type' => 'number',
                             'required' => false,
                             'placeholder' => 'auto',
@@ -254,7 +256,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'date_nos_font_size',
-                            'label' => __('Date numbers font size (px)', 'wpcb_booking'),
+                            'label' => esc_html__('Date numbers font size (px)', 'wpcb_booking'),
                             'type' => 'number',
                             'required' => false,
                             'placeholder' => 'auto',
@@ -266,7 +268,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'week_starts',
-                            'label' => __('Day starts on', 'wpcb_booking'),
+                            'label' => esc_html__('Day starts on', 'wpcb_booking'),
                             'type' => 'select',
                             'required' => false,
                             'placeholder' => '',
@@ -289,7 +291,7 @@ class WPCB_Setting{
                         // ),
                         array(
                             'key' => 'booking_status_list',
-                            'label' => __('Add Calendar Status', 'wpcb_booking'),
+                            'label' => esc_html__('Add Calendar Status', 'wpcb_booking'),
                             'type' => 'select',
                             'required' => false,
                             'placeholder' => '',
@@ -303,11 +305,11 @@ class WPCB_Setting{
                     )
                 ),
                 array(
-                    'heading' => __('Availability', 'wpcb_booking'),
+                    'heading' => esc_html__('Availability', 'wpcb_booking'),
                     'fields' => array(
                         array(
                             'key' => 'enable_days',
-                            'label' => __('Enable days', 'wpcb_booking'),
+                            'label' => esc_html__('Enable days', 'wpcb_booking'),
                             'type' => 'checkbox',
                             'required' => false,
                             'placeholder' => '',
@@ -321,11 +323,11 @@ class WPCB_Setting{
             ),
             'email' => array(
                 array(
-                    'heading' => __('Admin Email Setting', 'wpcb_booking'),
+                    'heading' => esc_html__('Admin Email Setting', 'wpcb_booking'),
                     'fields' => array(
                         array(
                             'key' => 'admin_enable',
-                            'label' => __('Enable?', 'wpcb_booking'),
+                            'label' => esc_html__('Enable?', 'wpcb_booking'),
                             'type' => 'radio',
                             'required' => true,
                             'class' => '',
@@ -336,7 +338,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'admin_mail_to',
-                            'label' => __('Mail To', 'wpcb_booking'),
+                            'label' => esc_html__('Mail To', 'wpcb_booking'),
                             'type' => 'select',
                             'required' => true,
                             'class' => 'selectize',
@@ -349,7 +351,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'admin_cc',
-                            'label' => __('Cc', 'wpcb_booking'),
+                            'label' => esc_html__('Cc', 'wpcb_booking'),
                             'type' => 'select',
                             'required' => false,
                             'class' => 'selectize',
@@ -362,7 +364,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'admin_bcc',
-                            'label' => __('Bcc', 'wpcb_booking'),
+                            'label' => esc_html__('Bcc', 'wpcb_booking'),
                             'type' => 'select',
                             'required' => false,
                             'class' => 'selectize',
@@ -375,7 +377,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'admin_subject',
-                            'label' => __('Subject', 'wpcb_booking'),
+                            'label' => esc_html__('Subject', 'wpcb_booking'),
                             'type' => 'text',
                             'required' => true,
                             'class' => 'form-control',
@@ -385,7 +387,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'admin_body',
-                            'label' => __('Body', 'wpcb_booking'),
+                            'label' => esc_html__('Body', 'wpcb_booking'),
                             'type' => 'textarea',
                             'required' => false,
                             'class' => 'form-control',
@@ -396,7 +398,7 @@ class WPCB_Setting{
                         ),
                         array(
                             'key' => 'admin_footer',
-                            'label' => __('Footer', 'wpcb_booking'),
+                            'label' => esc_html__('Footer', 'wpcb_booking'),
                             'type' => 'textarea',
                             'required' => false,
                             'class' => 'form-control',
@@ -475,8 +477,8 @@ class WPCB_Setting{
                 echo "<table class='table table-bordered'>";
                     echo "<thead>";
                         echo "<tr>";
-                            echo "<td class='p-2'><strong>".__('Shortcode', 'wpcb_booking')."</strong></td>";
-                            echo "<td class='p-2'><strong>".__('Description', 'wpcb_booking')."</strong></td>";
+                            echo "<td class='p-2'><strong>".esc_html__('Shortcode', 'wpcb_booking')."</strong></td>";
+                            echo "<td class='p-2'><strong>".esc_html__('Description', 'wpcb_booking')."</strong></td>";
                         echo "<tr>";
                     echo "</thead>";
                     echo "<tbody>";
@@ -484,12 +486,12 @@ class WPCB_Setting{
                         foreach ($shortcodes_list as $heading => $shortcodes) {
                             $heading = ucwords(str_replace('_', ' ', $heading));
                             echo "<tr class='heading'>";
-                                echo "<td colspan='2' class='p-2'><strong>{$heading}</strong></td>";
+                                echo "<td colspan='2' class='p-2'><strong>".esc_html($heading)."</strong></td>";
                             echo "</tr>";
                             foreach ($shortcodes as $shortcode => $description) {
                                 echo "<tr>";
-                                    echo "<td width='40%' class='p-2'><span class='shortcode'> {$shortcode} </span></td>";
-                                    echo "<td width='60%' class='p-2'> {$description} </td>";
+                                    echo "<td width='40%' class='p-2'><span class='shortcode'> ".esc_html($shortcode)." </span></td>";
+                                    echo "<td width='60%' class='p-2'> ".esc_html($description)." </td>";
                                 echo "</tr>";
                             }
                         }
@@ -540,13 +542,12 @@ class WPCB_Setting{
         global $wpcb_setting;
         $status_list = array(
             wpcb_booking_default_status(),
-            __('Booked', 'wpcb_booking'),
-            __('Approved', 'wpcb_booking')
+            esc_html__('Booked', 'wpcb_booking'),
+            esc_html__('Approved', 'wpcb_booking')
         );
         $setting_status =  $wpcb_setting->get_setting('general', 'booking_status_list');
         $setting_status = empty($setting_status) ? array() : $setting_status;
-        $status_list = array_merge($status_list, $setting_status);
-        dd($status_list, true);
+        $status_list = array_unique(array_merge($status_list, $setting_status));
         return apply_filters('wpcb_status_list', $status_list);
     }
 }

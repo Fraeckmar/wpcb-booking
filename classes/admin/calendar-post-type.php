@@ -10,8 +10,8 @@ class WPCB_Calendar_Post
     function calendar_custom_post_type()
     {
         $labels_menu = array(
-			'name'					=> _x('Calendars', 'Calendars', 'wpcb_booking'),
-			'singular_name'			=> _x('Calendar', 'Calendar', 'wpcb_booking'),
+			'name'					=> esc_html_x('Calendars', 'Calendars', 'wpcb_booking'),
+			'singular_name'			=> esc_html_x('Calendar', 'Calendar', 'wpcb_booking'),
 			'menu_name' 			=> esc_html__('Calendar', 'wpcb_booking'),
 			'all_items' 			=> esc_html__('All Calendars', 'wpcb_booking'),
 			'view_item' 			=> esc_html__('View Calendar', 'wpcb_booking'),

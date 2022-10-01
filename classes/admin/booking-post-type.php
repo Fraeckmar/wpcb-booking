@@ -10,8 +10,8 @@ class WPCB_Booking_Post
     static function wpcb_booking_custom_post_type()
     {
         $labels_menu = array(
-			'name'					=> _x('Booking', 'Booking', 'wpcb_booking'),
-			'singular_name'			=> _x('Booking', 'Booking', 'wpcb_booking'),
+			'name'					=> esc_html_x('Booking', 'Booking', 'wpcb_booking'),
+			'singular_name'			=> esc_html_x('Booking', 'Booking', 'wpcb_booking'),
 			'menu_name' 			=> esc_html__('Booking', 'wpcb_booking'),
 			'all_items' 			=> esc_html__('All Bookings', 'wpcb_booking'),
 			'view_item' 			=> esc_html__('View Booking', 'wpcb_booking'),

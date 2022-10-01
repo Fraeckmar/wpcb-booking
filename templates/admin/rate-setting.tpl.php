@@ -1,10 +1,10 @@
 <div class="row">
     <!-- Width -->
     <div class="col-md-12 mb-2">
-        <h5><?php _e('Rate', 'wpcb_booking'); ?></h5>
+        <h5><?php esc_html_e('Rate', 'wpcb_booking'); ?></h5>
         <div class="row">
             <div class="col-md-3">
-                <label class="mr-4"><?php _e('Service', 'wpcb_booking'); ?></label>
+                <label class="mr-4"><?php esc_html_e('Service', 'wpcb_booking'); ?></label>
             </div>
             <div class="col-md-3">
                 <div class="input-group">

@@ -10184,3 +10184,10 @@
 .wpcb-booking .show {
   opacity: 1;
 }
+.wpcb-booking .selectize-input {
+  overflow: visible;
+}
+
+.wpcb-booking .custom-select {
+  height: auto;
+}

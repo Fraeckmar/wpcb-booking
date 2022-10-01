@@ -35,11 +35,12 @@ jQuery(document).ready(function($){
 
     $('#calendar-post').on('click', '.calendar .day_num:not(.ignore)', function(){
         var date_day = $(this).find('.date-day').val();
-        $(this).find('.modal').modal('show');
         $(this).find('.modal-title').text('Day '+date_day);
+        let modal = new bootstrap.Modal('#modal-day-'+date_day, {  keyboard: false });
+        modal.show();        
     });
 
-    $('#calendar-post').on('hidden.bs.modal', '.calendar .modal', function(e){
+    $('#calendar-post').on('hidden.bs.modal', '.calendar .status-modal', function(e){
         let status = $(this).find('.status:checked').val();
         let day_num = $(this).closest('.day_num');
         let booked_icon_class = status == 'booked' ? 'd-block' : 'd-none';
@@ -47,6 +48,9 @@ jQuery(document).ready(function($){
         day_num.addClass(status);
         day_num.find('.booked-status').removeClass('d-block d-none');
         day_num.find('.booked-status').addClass(booked_icon_class);
+
+        
+        $('body').removeAttr('style');  
     });
 
     // Calendar
