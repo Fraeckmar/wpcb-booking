@@ -390,7 +390,7 @@ function wpcb_get_pages()
 
 function wpcb_get_default_admin_mail_body()
 {
-    $body = "<p>Dear Admin,</p>";
+    $body = "<p>Dear Admin,</p>\n";
     $body .= "<p>New booking was created <strong>#{wpcb_booking_number}</strong></p>";
     return $body;
 }
@@ -399,7 +399,18 @@ function wpcb_get_default_admin_mail_footer()
     $footer = "<p>Your Company Address here..</p>";
     return $footer;
 }
-
+function wpcb_get_default_client_mail_body()
+{
+    $body = "<p> Hi {".wpcb_customer_field('key')."},</p>\n";
+    $body .= "<p>Your booking number <strong>#{wpcb_booking_number}</strong> was place to {wpcb_booking_status} status.</p>\n";
+    $body .= "<p>Thank you for getting in touch with us.</p>";
+    return $body;
+}
+function wpcb_get_default_client_mail_footer()
+{
+    $footer = "<p>Your Company Address here..</p>";
+    return $footer;
+}
 function wpcb_error_handler($error)
 {
     echo "<p class='wpcb-error'> {$error} </p>";

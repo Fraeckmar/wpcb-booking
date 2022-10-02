@@ -21,10 +21,12 @@ jQuery(document).ready(function($){
         let current_tab = $(this).find('.options').data('tab');
         let newUrl = base_url+'&sub='+current_tab;
         change_current_url(newUrl);
-        
+
         let container = $(this).closest('.wpcb-sub-container');
         container.find('.wpcb-sub-content').removeClass('active');
         container.find(tab_container).addClass('active');
+        $('.wpcb-sub-navigation .btn').removeClass('active');
+        $(this).addClass('active');
     });
     
     function change_current_url(newUrl) {

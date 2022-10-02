@@ -1,9 +1,12 @@
+<?php
+$mail_setting = $wpcb_setting->get_setting('email_client');
+?>
 <div class="row">
     <div class="col-12 mb-4 p-3">
         <?php $wpcb_setting->wpcb_draw_shortcode_list(); ?>
     </div>
-    <?php if (!empty($email_setting_fields)): ?>
-        <?php foreach ($email_setting_fields as $section_field): ?>
+    <?php if (!empty($client_email_setting_fields)): ?>
+        <?php foreach ($client_email_setting_fields as $section_field): ?>
             <?php  $section_heading = array_key_exists('heading', $section_field) ? $section_field['heading'] : ''; ?>
             <div class="col-md-12">
                 <h5><?php echo $section_heading; ?></h5>

@@ -81,6 +81,7 @@ class WPCB_Setting{
             $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
             $calendar_id = $booking_id ? get_post_meta($booking_id, 'calendar_id', true) : 0;
             $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';
+            $old_status = '';
             if ($action) {
                 $post_args = array(
                     'post_title' => sanitize_text_field($_POST['post_title'])
@@ -90,6 +91,7 @@ class WPCB_Setting{
                     if ($booking_id) {
                         $post_args['ID'] = $booking_id;
                         wp_update_post($post_args);
+                        $old_status = get_post_meta($booking_id, 'wpcb_booking_status',  true);
                     }                    
                 } else if ($action == 'new') {
                     $post_args['post_type'] = 'wpcb_booking';
@@ -132,7 +134,7 @@ class WPCB_Setting{
                     if (isset($_POST['wpcb_booking_status'])) {
                         update_post_meta($booking_id, 'wpcb_booking_status', sanitize_text_field($_POST['wpcb_booking_status']));
                     }
-                    do_action('wpcb_after_save_booking_post', $booking_id, $_POST);
+                    do_action('wpcb_after_save_booking_post', $booking_id, $_POST, $old_status);
                     $notif_action = $action == 'edit' ? 'updated' : 'added';
                     $booking_title = $booking_id ? get_the_title($booking_id) : '';
                     wpcb_set_notification("<strong>{$booking_title}</strong> {$notif_action} successfully!");
@@ -183,9 +185,15 @@ class WPCB_Setting{
                 'has_form' => true,
                 'in_save_setting' => true
             ),
-            'email' => array(
-                'label' => esc_html__('Email Setting', 'wpcb_booking'),
-                'file_path' => wpcb_get_template('email-setting.tpl', true),
+            'email_admin' => array(
+                'label' => esc_html__('Admin Email', 'wpcb_booking'),
+                'file_path' => wpcb_get_template('email/admin-email-setting.tpl', true),
+                'has_form' => true,
+                'in_save_setting' => true
+            ),
+            'email_client' => array(
+                'label' => esc_html__('Client Email', 'wpcb_booking'),
+                'file_path' => wpcb_get_template('email/client-email-setting.tpl', true),
                 'has_form' => true,
                 'in_save_setting' => true
             )
@@ -321,7 +329,7 @@ class WPCB_Setting{
                     )
                 )
             ),
-            'email' => array(
+            'email_admin' => array(
                 array(
                     'heading' => esc_html__('Admin Email Setting', 'wpcb_booking'),
                     'fields' => array(
@@ -333,8 +341,8 @@ class WPCB_Setting{
                             'class' => '',
                             'group_class' => 'form-check-inline',
                             'options' => array('Yes', 'No'),
-                            'value' => !empty($this->get_setting('email', 'admin_enable')) ? $this->get_setting('email', 'admin_enable') : 'Yes',
-                            'setting' => 'email'
+                            'value' => !empty($this->get_setting('email_admin', 'admin_enable')) ? $this->get_setting('email_admin', 'admin_enable') : 'Yes',
+                            'setting' => 'email_admin'
                         ),
                         array(
                             'key' => 'admin_mail_to',
@@ -342,12 +350,12 @@ class WPCB_Setting{
                             'type' => 'select',
                             'required' => true,
                             'class' => 'selectize',
-                            'options' => $this->get_setting('email', 'admin_mail_to') ?? array($admin_default_email),
-                            'value' => $this->get_setting('email', 'admin_mail_to') ?? $admin_default_email,
+                            'options' => $this->get_setting('email_admin', 'admin_mail_to') ?? array($admin_default_email),
+                            'value' => $this->get_setting('email_admin', 'admin_mail_to') ?? $admin_default_email,
                             'placeholder' => 'sample@gmail.com',
                             'description' => '<strong>Note:</strong> Type and select to add new item',
                             'extras' => 'multiple data-has_remove="true" data-allow_create="true"',
-                            'setting' => 'email',
+                            'setting' => 'email_admin',
                         ),
                         array(
                             'key' => 'admin_cc',
@@ -355,12 +363,12 @@ class WPCB_Setting{
                             'type' => 'select',
                             'required' => false,
                             'class' => 'selectize',
-                            'options' => $this->get_setting('email', 'admin_cc'),
-                            'value' => $this->get_setting('email', 'admin_cc'),
+                            'options' => $this->get_setting('email_admin', 'admin_cc'),
+                            'value' => $this->get_setting('email_admin', 'admin_cc'),
                             'placeholder' => 'sample@gmail.com',
                             'description' => '<strong>Note:</strong> Type and select to add new item',
                             'extras' => 'multiple data-has_remove="true" data-allow_create="true"',
-                            'setting' => 'email',
+                            'setting' => 'email_admin',
                         ),
                         array(
                             'key' => 'admin_bcc',
@@ -368,12 +376,12 @@ class WPCB_Setting{
                             'type' => 'select',
                             'required' => false,
                             'class' => 'selectize',
-                            'options' => $this->get_setting('email', 'admin_bcc'),
-                            'value' => $this->get_setting('email', 'admin_bcc'),
+                            'options' => $this->get_setting('email_admin', 'admin_bcc'),
+                            'value' => $this->get_setting('email_admin', 'admin_bcc'),
                             'description' => '<strong>Note:</strong> Type and select to add new item',
                             'placeholder' => 'sample@gmail.com',
                             'extras' => 'multiple data-has_remove="true" data-allow_create="true"',
-                            'setting' => 'email',
+                            'setting' => 'email_admin',
                         ),
                         array(
                             'key' => 'admin_subject',
@@ -381,30 +389,118 @@ class WPCB_Setting{
                             'type' => 'text',
                             'required' => true,
                             'class' => 'form-control',
-                            'value' => $this->get_setting('email', 'admin_subject') ?? 'New Booking',     
+                            'value' => $this->get_setting('email_admin', 'admin_subject') ?? 'New Booking',     
                             'placeholder' => 'New Booking',                       
-                            'setting' => 'email',
+                            'setting' => 'email_admin',
                         ),
                         array(
                             'key' => 'admin_body',
                             'label' => esc_html__('Body', 'wpcb_booking'),
                             'type' => 'textarea',
-                            'required' => false,
+                            'required' => true,
                             'class' => 'form-control',
-                            'value' => $this->get_setting('email', 'admin_body'),     
+                            'value' => $this->get_setting('email_admin', 'admin_body'),     
                             'placeholder' => wpcb_get_default_admin_mail_body(),                       
                             'extras' => 'rows="6"',
-                            'setting' => 'email',
+                            'setting' => 'email_admin',
                         ),
                         array(
                             'key' => 'admin_footer',
                             'label' => esc_html__('Footer', 'wpcb_booking'),
                             'type' => 'textarea',
-                            'required' => false,
+                            'required' => true,
                             'class' => 'form-control',
-                            'value' => $this->get_setting('email', 'admin_footer'),
+                            'value' => $this->get_setting('email_admin', 'admin_footer'),
                             'placeholder' => wpcb_get_default_admin_mail_footer(),
-                            'setting' => 'email',
+                            'setting' => 'email_admin',
+                        )
+                    )
+                )
+            ),
+            'email_client' => array(
+                array(
+                    'heading' => esc_html__('Client Email Setting', 'wpcb_booking'),
+                    'fields' => array(
+                        array(
+                            'key' => 'client_enable',
+                            'label' => esc_html__('Enable?', 'wpcb_booking'),
+                            'type' => 'radio',
+                            'required' => true,
+                            'class' => '',
+                            'group_class' => 'form-check-inline',
+                            'options' => array('Yes', 'No'),
+                            'value' => !empty($this->get_setting('email_client', 'client_enable')) ? $this->get_setting('email_client', 'client_enable') : 'Yes',
+                            'setting' => 'email_client'
+                        ),
+                        array(
+                            'key' => 'client_mail_to',
+                            'label' => esc_html__('Mail To', 'wpcb_booking'),
+                            'type' => 'select',
+                            'required' => true,
+                            'class' => 'selectize',
+                            'options' => $this->get_setting('email_client', 'client_mail_to') ?? array($admin_default_email),
+                            'value' => $this->get_setting('email_client', 'client_mail_to') ?? $admin_default_email,
+                            'placeholder' => 'sample@gmail.com',
+                            'description' => '<strong>Note:</strong> Type and select to add new item',
+                            'extras' => 'multiple data-has_remove="true" data-allow_create="true"',
+                            'setting' => 'email_client',
+                        ),
+                        array(
+                            'key' => 'client_cc',
+                            'label' => esc_html__('Cc', 'wpcb_booking'),
+                            'type' => 'select',
+                            'required' => false,
+                            'class' => 'selectize',
+                            'options' => $this->get_setting('email_client', 'client_cc'),
+                            'value' => $this->get_setting('email_client', 'client_cc'),
+                            'placeholder' => 'sample@gmail.com',
+                            'description' => '<strong>Note:</strong> Type and select to add new item',
+                            'extras' => 'multiple data-has_remove="true" data-allow_create="true"',
+                            'setting' => 'email_client',
+                        ),
+                        array(
+                            'key' => 'client_bcc',
+                            'label' => esc_html__('Bcc', 'wpcb_booking'),
+                            'type' => 'select',
+                            'required' => false,
+                            'class' => 'selectize',
+                            'options' => $this->get_setting('email_client', 'client_bcc'),
+                            'value' => $this->get_setting('email_client', 'client_bcc'),
+                            'description' => '<strong>Note:</strong> Type and select to add new item',
+                            'placeholder' => 'sample@gmail.com',
+                            'extras' => 'multiple data-has_remove="true" data-allow_create="true"',
+                            'setting' => 'email_client',
+                        ),
+                        array(
+                            'key' => 'client_subject',
+                            'label' => esc_html__('Subject', 'wpcb_booking'),
+                            'type' => 'text',
+                            'required' => true,
+                            'class' => 'form-control',
+                            'value' => $this->get_setting('email_client', 'client_subject') ?? 'Booking Number #{wpcb_booking_number}',     
+                            'placeholder' => 'Booking Number #{wpcb_booking_number}',                       
+                            'setting' => 'email_client',
+                        ),
+                        array(
+                            'key' => 'client_body',
+                            'label' => esc_html__('Body', 'wpcb_booking'),
+                            'type' => 'textarea',
+                            'required' => true,
+                            'class' => 'form-control',
+                            'value' => $this->get_setting('email_client', 'client_body'),     
+                            'placeholder' => wpcb_get_default_client_mail_body(),                       
+                            'extras' => 'rows="6"',
+                            'setting' => 'email_client',
+                        ),
+                        array(
+                            'key' => 'client_footer',
+                            'label' => esc_html__('Footer', 'wpcb_booking'),
+                            'type' => 'textarea',
+                            'required' => true,
+                            'class' => 'form-control',
+                            'value' => $this->get_setting('email_client', 'client_footer'),
+                            'placeholder' => wpcb_get_default_client_mail_footer(),
+                            'setting' => 'email_client',
                         )
                     )
                 )

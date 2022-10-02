@@ -194,7 +194,8 @@ class WPCB_Sub_Menu
         global $wpcb_booking, $wpcb_setting;
         $current_tab = isset($_GET['tab']) && !empty($_GET['tab']) ? esc_attr($_GET['tab']) : 'general';
         $general_setting_fields = array_key_exists('general', $wpcb_setting->fields()) ? $wpcb_setting->fields()['general'] : array();
-        $email_setting_fields = array_key_exists('email', $wpcb_setting->fields()) ? $wpcb_setting->fields()['email'] : array();
+        $admin_email_setting_fields = array_key_exists('email_admin', $wpcb_setting->fields()) ? $wpcb_setting->fields()['email_admin'] : array();
+        $client_email_setting_fields = array_key_exists('email_client', $wpcb_setting->fields()) ? $wpcb_setting->fields()['email_client'] : array();
         $wpcb_shortcode_list = $wpcb_setting->wpcb_get_shortcode_list();
         ?>
         <div id="wpcb-booking-admin" class="wrap wpcb-booking">
