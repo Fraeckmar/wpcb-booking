@@ -17,8 +17,8 @@
                                 <input type="number" name="general[width]" value="<?php echo $wpcb_setting->get_setting('general', 'width'); ?>" class="form-control"/> 
                                 <div class="input-group-append">
                                     <select name="general[width_unit]">
-                                        <option value="px" <?php selected($wpcb_setting->get_setting('general', 'width_unit'), 'px'); ?>><?php esc_html('px'); ?></option>
-                                        <option value="%" <?php selected($wpcb_setting->get_setting('general', 'width_unit'), '%'); ?>><?php esc_html('%'); ?></option>
+                                        <option value="px" <?php selected($wpcb_setting->get_setting('general', 'width_unit'), 'px'); ?>><?php esc_html_e('px'); ?></option>
+                                        <option value="%" <?php selected($wpcb_setting->get_setting('general', 'width_unit'), '%'); ?>><?php esc_html_e('%'); ?></option>
                                     </select>
                                 </div>
                             </div>

@@ -95,6 +95,7 @@ class WPCB_Sub_Menu
             $form_fields = !empty($wpcb_booking->fields()) ? $wpcb_booking->fields($booking_id) : array();
             $title = $action == 'edit' ? get_the_title($booking_id) : '';   
 
+            $booked_amount = get_post_meta($booking_id, 'booked_amount', true) ?? 0;
             $order_html = $booking_id && function_exists('wpcr_get_order_details_html') ? wpcr_get_order_details_html($booking_id) : '';
             require_once(wpcb_get_template('booking.tpl', true));
         } else {

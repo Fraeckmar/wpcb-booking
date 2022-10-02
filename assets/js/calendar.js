@@ -24,6 +24,10 @@ jQuery(document).ready(function($){
         }, 5000);
 	}
 
+    window.force_hide_modal = ()=> {
+        $('body').removeAttr('style');
+    }
+
 	if( notification && notification.length != 0 ){
 		showNotification( notification.message, notification.type, notification.icon );
 	}
@@ -119,20 +123,21 @@ jQuery(document).ready(function($){
     }
 
     $('.calendar').on('mouseover', '.day_num', function(){
-        let width = {};
-        $('.calendar').find('.date-tool-tip').hide();
-        $(this).find('.date-tool-tip').show();
-        $(this).find('.date-tool-tip').css({'padding': '0 5px'});
-        let desc = $(this).find('.descryption').text();
-        if (desc.length < 25) {
-            width = {'width':'auto'};
-        }
-        if (desc.length > 25 && desc.length < 115) {
-            let width_val = (parseInt(desc.length) * 2)+'px';
-            width = {'width': width_val};
-        }
-        if (width) {
-            $(this).find('.date-tool-tip').css(width);
+        if ($(this).find('.date-tool-tip').length) {
+            let date_height = $(this).height();
+            let width = {};
+            $(this).find('.date-tool-tip').css({'padding': '0 5px', 'bottom': date_height+'px'});
+            let desc = $(this).find('.descryption').text();
+            if (desc.length < 25) {
+                width = {'width':'auto'};
+            }
+            if (desc.length > 25 && desc.length < 115) {
+                let width_val = (parseInt(desc.length) * 2)+'px';
+                width = {'width': width_val};
+            }
+            if (width) {
+                $(this).find('.date-tool-tip').css(width);
+            }
         }
     });
 });

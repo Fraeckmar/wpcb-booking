@@ -91,7 +91,9 @@ function wpcb_get_rate_type()
 {
     $rate_type = 'no-rate';
     if (function_exists('wpcr_get_rate_type')) {
-        $rate_type = strtolower(wpcr_get_rate_type());
+        if (wpcr_is_enable_payment()) {
+            $rate_type = strtolower(wpcr_get_rate_type());
+        }        
     }
     return $rate_type;
 }

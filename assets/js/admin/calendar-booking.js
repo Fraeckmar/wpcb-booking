@@ -47,10 +47,8 @@ jQuery(document).ready(function($){
         day_num.removeClass('unavailable booked disabled available');
         day_num.addClass(status);
         day_num.find('.booked-status').removeClass('d-block d-none');
-        day_num.find('.booked-status').addClass(booked_icon_class);
-
-        
-        $('body').removeAttr('style');  
+        day_num.find('.booked-status').addClass(booked_icon_class);        
+        force_hide_modal();
     });
 
     // Calendar

@@ -224,9 +224,12 @@ body:not(wp-admin) .calendar .btn.update.disabled {
 .date-tool-tip {
     display: none;
 }
+.day_num:hover .date-tool-tip {
+    display: block;
+}
 .date-tool-tip {
     position: absolute;
-    bottom: 80px;
+    bottom: var(--date-width);
     width: 300px;
     z-index: 9;
     background-color: #fff;

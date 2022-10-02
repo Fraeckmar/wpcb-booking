@@ -70,13 +70,13 @@
             <?php endif; ?>
 
             <!-- Order Detetails -->
-            <?php if (!empty($order_html)): ?>
+            <?php if (!empty($order_html) && $booked_amount): ?>
                 <div class="col-sm-12 mb-4">
                     <div class="card p-0 mw-100">
                         <div class="card-header"> 
                             <h5 class="h4 m-0"><?php esc_html_e('Order Details', 'wpcb_booking'); ?> </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-0">
                             <?php echo $order_html; ?>
                         </div>
                     </div>
