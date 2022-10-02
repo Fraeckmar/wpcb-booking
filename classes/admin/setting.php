@@ -159,7 +159,7 @@ class WPCB_Setting{
     function get_setting($setting_key='', $field='', $all_fields=false)
     {
         $wpcb_settings = $this->wpcb_settings();
-        $result = ($all_fields) ? $wpcb_settings : '';
+        $result = ($all_fields) ? $wpcb_settings : 0;
         if (empty($field) && empty($result)) {
             $result = array();
         }

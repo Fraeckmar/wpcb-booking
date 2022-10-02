@@ -93,9 +93,11 @@ body.modal-open {
 
 /* Manage Booking */
 #booking-list .booked-date {
-    padding: 2px 4px;
+    padding: 0 4px;
     border-radius: 5px;
-    margin: 2px;
+    margin: 1px 0;
+    display: inline-block;
+    background-color: #eaeaed;
 }
 #booking-post .calendar .days .day_num .booked-status {
     background-color: #379aff;

@@ -84,16 +84,14 @@
                         $meta_values = $wpcb_booking->wpcb_get_booking_details($booking_id);
                         $calendar_id = array_key_exists('calendar_id', $meta_values) ? $meta_values['calendar_id'] : 0;                
                         $booked_dates = array_key_exists('booked_dates', $meta_values) ? $meta_values['booked_dates'] : ''; 
-                        $booked_dates_str = !empty($booked_dates) ? implode('<br>', $booked_dates) : '';
-                        // if (!empty($booked_dates)) {
-                        //     foreach ($booked_dates as $idx => $booked_date) {
-                        //         $booked_date = date('F j, Y', strtotime($booked_date));
-                        //         $idx++;
-                        //         $separator = count($booked_dates) != $idx ? '<br>' : '';
-                        //         $br = $idx % 2 == 0 ? '<br>' : '';
-                        //         $booked_dates_str .= "<span class='booked-date'>{$booked_date}</span>{$separator}{$br}";
-                        //     }
-                        // }
+                        //$booked_dates_str = !empty($booked_dates) ? implode('<br>', $booked_dates) : '';
+                        $booked_dates_str = '';
+                        if (!empty($booked_dates)) {
+                            foreach ($booked_dates as $idx => $booked_date) {
+                                $booked_date = date(wpcb_date_format(), strtotime($booked_date));
+                                $booked_dates_str .= "<span class='booked-date'>{$booked_date}</span><br>";
+                            }
+                        }
                         $edit_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=edit&id={$booking_id}"));
                         $trash_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=trash&id={$booking_id}"));
                         $restore_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=untrash&id={$booking_id}"));
@@ -117,7 +115,7 @@
                         <td><?php echo $meta_values[wpcb_customer_field('key')] ?? '' ?></td>
                         <td><?php echo $booked_dates_str; ?></td>
                         <td><span class="status"><?php echo $meta_values['wpcb_booking_status'] ?? '' ?></span></td>
-                        <td><?php echo get_the_date() ?></td>
+                        <td><?php echo get_the_date(wpcb_date_format()) ?></td>
                         <?php do_action('wpcb_manage_booking_after_column_data', $booking_id); ?>
                     </tr>
                     <?php endwhile; ?>
