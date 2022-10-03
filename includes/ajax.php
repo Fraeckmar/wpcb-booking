@@ -1,5 +1,6 @@
 <?php
 add_action('wp_ajax_wpcb_calendar_change', 'wpcb_calendar_change_callback');
+add_action('wp_ajax_nopriv_wpcb_calendar_change', 'wpcb_calendar_change_callback');
 function wpcb_calendar_change_callback()
 {
     require(WPCB_BOOKING_PLUGIN_PATH. 'classes/calendar.php');

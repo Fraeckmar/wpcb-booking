@@ -3,7 +3,7 @@ class Calendar {
 
     private $current_date, $active_year, $active_month, $active_day, $calendar_id;
     public $has_header_nav = true;
-    public $booking_id;
+    public $booking_id = 0;
     public $has_date_modal = false;
 
     public function __construct($calendar_id=0, $date = null) 
