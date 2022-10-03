@@ -3,7 +3,6 @@ jQuery(document).ready(function($){
     var is_admin = WPCBBookingAjax.is_admin;
     var notification = WPCBBookingAjax.notification;
     var loading_html = '<div class="wpcb-loading text-info text-center h3"> <span class="spinner-grow spinner-border-sm"></span></div>';
-    const calendarDateModal = $('body').find('#calendar-modal').length ? new bootstrap.Modal('#calendar-modal', {  keyboard: false }) : {};
 
     window.wpcb_show_loading = function() {
         $('.wpcb-booking').append(loading_html);
@@ -33,12 +32,13 @@ jQuery(document).ready(function($){
 	}
     
     function display_goto_dates(display_option) {
+        let moModal = new bootstrap.Modal('#calendar-modal', {  keyboard: false });
         display_option = '.'+display_option;
         let modal = $('.calendar').find('#calendar-modal');
         modal.find('.option').addClass('d-none');
         modal.find(display_option).removeClass('animate-scale');
         modal.find(display_option).removeClass('d-none');
-        calendarDateModal.show();
+        moModal.show();
         setTimeout(function(){
             modal.find(display_option).addClass('animate-scale');
         }, 100);
@@ -101,7 +101,6 @@ jQuery(document).ready(function($){
         if (next != 'done') {
             display_goto_dates(next);
         } else {
-            calendarDateModal.hide();
             let goto_year = $('#go_to_date').data('year');
             let goto_month = $('#go_to_date').data('month');
             let goto_date = goto_year+'-'+goto_month;

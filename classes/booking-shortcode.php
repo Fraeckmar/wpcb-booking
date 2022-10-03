@@ -7,7 +7,7 @@ class Booking_Shortcode
         add_shortcode('wpcb_booking', array($this, 'wpcb_booking_form'));
         add_action('wpcb_after_booking_send_email', array($this, 'wpcb_admin_send_email_notification'), 10, 2);
         add_action('wpcb_after_booking_send_email', array($this, 'wpcb_client_send_email_notification'), 10, 3);
-        //add_action('wpcb_after_save_booking_post', array($this, 'wpcb_client_send_email_notification'), 10, 3);
+        add_action('wpcb_after_save_booking_post', array($this, 'wpcb_client_send_email_notification'), 10, 3);
         add_action('wpcb_after_booking_save', array($this, 'wpcb_after_booking_save_callback'), 100, 2);
     }
 
