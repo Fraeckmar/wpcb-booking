@@ -1,5 +1,5 @@
 <?php 
-$current_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
+$current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
 ?>
 <div id="wpcb-navigation" class="wpcb-navigation">
     <ul class="d-flex flex-row m-0">
@@ -8,7 +8,7 @@ $current_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
                 $active_class = ($current_tab == $menu_key) ? 'active' : '';
                 ?>
                 <li class="m-0 mr-1">
-                    <span class="btn btn-lg btn-light <?php echo $active_class; ?>" data-tab="<?php echo $menu_key; ?>" data-tab_container="#<?php echo $menu_key; ?>-container"><?php echo $menu['label']; ?></span>
+                    <span class="btn btn-lg btn-light <?php esc_html_e($active_class); ?>" data-tab="<?php esc_html_e($menu_key); ?>" data-tab_container="#<?php esc_html_e($menu_key); ?>-container"><?php esc_html_e($menu['label']); ?></span>
                 </li>
             <?php endforeach; ?>
         <?php endif; ?>

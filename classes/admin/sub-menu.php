@@ -62,10 +62,10 @@ class WPCB_Sub_Menu
 
     function wpcb_manage_booking_display_notif()
     {
-        $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
+        $booking_id = isset($_GET['id']) && is_numeric(sanitize_text_field($_GET['id'])) ? sanitize_text_field($_GET['id']) : 0;
         $booking_title = $booking_id ? get_the_title($booking_id) : '';
-        $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';
-        if ($booking_id && !empty($action) && !in_array($action, array('edit')) && isset($_GET['page']) && esc_attr($_GET['page']) == wpcb_plugin_slug()) {
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
+        if ($booking_id && !empty($action) && !in_array($action, array('edit')) && isset($_GET['page']) && sanitize_text_field($_GET['page']) == wpcb_plugin_slug()) {
             if ($action == 'untrash') {
                 $action = 'restored';
             }
@@ -75,18 +75,18 @@ class WPCB_Sub_Menu
 
     function wpcb_online_booking_callback()
     {
-        if (!isset($_GET['page']) && esc_attr($_GET['page']) != wpcb_plugin_slug()) { 
+        if (!isset($_GET['page']) && sanitize_text_field($_GET['page']) != wpcb_plugin_slug()) { 
             return false; 
         }
         require_once(WPCB_BOOKING_PLUGIN_PATH. 'classes/calendar.php');
         global $wpcb_booking, $wpcb_setting;        
 
         $plugin_slug = wpcb_plugin_slug();
-        $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
+        $booking_id = isset($_GET['id']) && is_numeric(sanitize_text_field($_GET['id'])) ? sanitize_text_field($_GET['id']) : 0;
         $booking_title = $booking_id ? get_the_title($booking_id) : '';
         $calendar_id = get_post_meta($booking_id, 'calendar_id', true);
-        $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';      
-        $status = isset($_GET['status']) ? esc_attr($_GET['status']) : '';  
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';      
+        $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';  
         $is_active_booking = !in_array($action, array('untrash', 'delete')) && !in_array($status, array('trash', 'untrash')) ? true : false;
 
         if (in_array($action, array('new', 'edit'))) {
@@ -96,7 +96,7 @@ class WPCB_Sub_Menu
             $title = $action == 'edit' ? get_the_title($booking_id) : '';   
 
             $booked_amount = get_post_meta($booking_id, 'booked_amount', true) ?? 0;
-            $order_html = $booking_id && function_exists('wpcr_get_order_details_html') ? wpcr_get_order_details_html($booking_id) : '';
+            $order_html = $booking_id ? wpcb_get_order_details_html($booking_id) : '';
             require_once(wpcb_get_template('booking.tpl', true));
         } else {
             if (in_array($action, array('trash', 'untrash', 'restore')) && $booking_id) {
@@ -108,7 +108,7 @@ class WPCB_Sub_Menu
                 }             
             }
 
-            $q_booking = isset($_POST['q_booking']) ? esc_attr($_POST['q_booking'])  : '';
+            $q_booking = isset($_POST['q_booking']) && !empty($_POST['q_booking']) ? sanitize_text_field($_POST['q_booking'])  : '';
             $q_customer_name = isset($_POST[wpcb_customer_field('key')]) ? sanitize_text_field($_POST[wpcb_customer_field('key')]) : '';
             $q_wpcb_booking_status = isset($_POST['wpcb_booking_status']) ? sanitize_text_field($_POST['wpcb_booking_status']) : '';
             $date_from = isset($_POST['date_from']) ? sanitize_text_field($_POST['date_from']) : '';
@@ -116,6 +116,7 @@ class WPCB_Sub_Menu
             $post_per_page = isset($_GET['post_per_page']) && is_numeric($_GET['post_per_page']) ? esc_attr($_GET['post_per_page'])  : 10;
             $entries_options = array(10, 25, 50);
             $meta_query = array();
+
             if (!empty($q_customer_name)) {
                 $meta_query[] = array(
                     'key' => wpcb_customer_field('key'),
@@ -133,6 +134,7 @@ class WPCB_Sub_Menu
             
             $meta_query = apply_filters( 'wpcb_manage_booking_meta_query', $meta_query);
             $paged = isset($_GET['paged']) && is_numeric($_GET['paged']) ? esc_attr($_GET['paged']) : 1; 
+            
             $active_args = array(
                 'post_type'         => 'wpcb_booking',
                 'post_status'       => 'publish',
@@ -192,7 +194,7 @@ class WPCB_Sub_Menu
     function wpcb_settings_callback()
     {
         global $wpcb_booking, $wpcb_setting;
-        $current_tab = isset($_GET['tab']) && !empty($_GET['tab']) ? esc_attr($_GET['tab']) : 'general';
+        $current_tab = isset($_GET['tab']) && !empty($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
         $general_setting_fields = array_key_exists('general', $wpcb_setting->fields()) ? $wpcb_setting->fields()['general'] : array();
         $admin_email_setting_fields = array_key_exists('email_admin', $wpcb_setting->fields()) ? $wpcb_setting->fields()['email_admin'] : array();
         $client_email_setting_fields = array_key_exists('email_client', $wpcb_setting->fields()) ? $wpcb_setting->fields()['email_client'] : array();
@@ -227,14 +229,14 @@ class WPCB_Sub_Menu
 
     function wpcb_calendars_callback()
     {
-        $submenu_slug = wpcb_plugin_slug().'-calendars';
-        if (!isset($_GET['page']) && esc_attr($_GET['page']) == $submenu_slug) {
+        $submenu_slug = sanitize_key(wpcb_plugin_slug().'-calendars');
+        if (!isset($_GET['page']) && sanitize_key($_GET['page']) == $submenu_slug) {
             return false;
         }
         require_once(WPCB_BOOKING_PLUGIN_PATH. 'classes/calendar.php');
-        $calendar_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
-        $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';      
-        $status = isset($_GET['status']) ? esc_attr($_GET['status']) : '';  
+        $calendar_id = isset($_GET['id']) && is_numeric($_GET['id']) ? sanitize_text_field($_GET['id']) : 0;
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';      
+        $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';  
         $active_current = $status != 'trash' ? 'current' : '';
         $trash_current = $status == 'trash' ? 'current' : '';   
            

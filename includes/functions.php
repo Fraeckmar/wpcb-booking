@@ -20,6 +20,34 @@ function wpcb_plugin_slug()
 {
     return 'manage-booking';
 }
+function wpcb_allowed_html_tags()
+{
+    return array(
+        'br' => array('id' => array(), 'class' => array()), 
+        'p' => array('id' => array(), 'class' => array()), 
+        'strong' => array('id' => array(), 'class' => array()),
+        'a' => array('id' => array(), 'class' => array()),
+        'ul' => array('id' => array(), 'class' => array()),
+        'li' => array('id' => array(), 'class' => array()),
+        'ol' => array('id' => array(), 'class' => array()),
+        'span' => array('id' => array(), 'class' => array()),
+        'div' => array('id' => array(), 'class' => array()),
+        'h1' => array('id' => array(), 'class' => array()),
+        'h2' => array('id' => array(), 'class' => array()),
+        'h3' => array('id' => array(), 'class' => array()),
+        'h4' => array('id' => array(), 'class' => array()),
+        'h5' => array('id' => array(), 'class' => array()),
+        'h6' => array('id' => array(), 'class' => array()),
+        'table' => array('id' => array(), 'class' => array(), 'width'=> array(), 'style' => array(), 'border' => array()),
+        'thead' => array('id' => array(), 'class' => array()),
+        'tbody' => array('id' => array(), 'class' => array()),
+        'tfooter' => array('id' => array(), 'class' => array()),
+        'tr' => array('id' => array(), 'class' => array(), 'align' => array()),
+        'th' => array('id' => array(), 'class' => array(), 'align' => array(), 'width'=> array(), 'style' => array(), 'border' => array()),
+        'td' => array('id' => array(), 'class' => array(), 'align' => array(), 'width'=> array(), 'style' => array(), 'border' => array()),
+        'img' => array('src' => array(), 'height' => array(), 'width' => array(), 'style' => array())
+    );
+}
 function dd($data, $die=false)
 {
     if (isset($_GET['debug'])) {
@@ -31,19 +59,39 @@ function dd($data, $die=false)
         }
     }
 }
+function wpcb_sanitize_data($data, $type='')
+{
+    if (is_array($data)) {
+        array_walk($data, function(&$value) use ($type){
+            if ($type == 'email') {
+                $value = !is_array($value) ? sanitize_email($value) : $value;
+            } else {
+                $value = !is_array($value) ? sanitize_text_field($value) : $value;
+            }            
+        });
+    } else {
+        if ($type == 'email') {
+            $data = sanitize_email($data);
+        } else {
+            $data = sanitize_text_field($data);
+        }   
+    }
+    return $data;
+}
+
 function wpcb_customer_field($retrieve_field='')
 {
     $field = [
         'key' => 'wpcb_customer_name',
-        'label' => __('Customer', 'wpcb_booking')
+        'label' => esc_html__('Customer', 'wpcb_booking')
     ];
     if (class_exists('wpcf_admin')) {
         $customer_field_id = wpcf_get_setting_value('customer_field');
         if ($customer_field_id) {
             $customer_field = wpcf_get_custom_field_data($customer_field_id);
             if (!empty($customer_field)) {
-                $field['key'] = $customer_field['field_key'];
-                $field['label'] = $customer_field['label'];
+                $field['key'] = sanitize_key($customer_field['field_key']);
+                $field['label'] = sanitize_text_field($customer_field['label']);
             }
             
         }
@@ -65,7 +113,7 @@ function wpcb_number_format($value, $currency=false, $decimals_count=2)
         $currency_symbol = wpcb_get_currency();
         $formatted_number = $currency_symbol.$formatted_number;
     }
-    return $formatted_number;
+    return sanitize_text_field($formatted_number);
 }
 function wpcb_encrypt($value)
 {
@@ -100,7 +148,7 @@ function wpcb_get_rate_type()
 function wpcb_set_notification($msg, $alert_type='success', $icon='check')
 {
     $_POST['wpcb_notification'] = [
-        'message' => $msg,
+        'message' => sanitize_text_field($msg),
         'type' => $alert_type,
         'icon' => $icon
     ];
@@ -119,7 +167,7 @@ function wpcb_update_post_status($post_id, $status)
     if (!$post_id) {
         throw new Exception("Post ID not specified");
     }
-    $status = $status == 'untrash' ? 'publish' : $status;
+    $status = sanitize_text_field($status) == 'untrash' ? 'publish' : $status;
     $time = current_time('mysql'); 
     $args = array (
         'ID' => $post_id,
@@ -139,7 +187,7 @@ function wpcb_clean_dir($directory)
 }
 function wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $data)
 {
-    $selected_dates = isset($data['dates']) ? $data['dates'] : array();
+    $selected_dates = isset($data['dates']) ? wpcb_sanitize_data($data['dates']) : array();
     $calendar_dates = get_post_meta($calendar_id, 'dates', true);
     $calendar_dates = empty($calendar_dates) ? array() : $calendar_dates;
     foreach ($selected_dates as $selected_date) {
@@ -167,8 +215,9 @@ function wpcb_get_calendar_list()
 function wpcb_draw_date_modal($calendar_id, $date, $day)
 {
     global $wpcb_setting, $wpcb_booking;
+    $day = esc_html($day);
     $status = wpcb_get_date_value($calendar_id, $date, 'status');
-    $enabled_days = $wpcb_setting->get_setting('general', 'enable_days');
+    $enabled_days = wpcb_sanitize_data($wpcb_setting->get_setting('general', 'enable_days'));
     $day_name = wpcb_get_day_name($date);
     if (empty($status)) {
         $status = !in_array($day_name, $enabled_days) ? 'unavailable' : 'available';
@@ -184,21 +233,21 @@ function wpcb_draw_date_modal($calendar_id, $date, $day)
                     echo "<div class='form-group'>";
                         echo "<div class='form-check form-check-inline'>";
                             echo "<input type='radio' id='available-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='available' ".checked($status == 'available', 1, false)."/>";
-                            echo "<label for='available-{$day}' class='form-check-label'>".esc_html__('Available')."</label>";
+                            echo "<label for='available-{$day}' class='form-check-label'>".esc_html__('Available', 'wpcb_booking')."</label>";
                         echo "</div>";
                         echo "<div class='form-check form-check-inline'>";
                             echo "<input type='radio' id='unavailable-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='unavailable' ".checked($status == 'unavailable', 1, false)."/>";
-                            echo "<label for='unavailable-{$day}' class='form-check-label'>".esc_html__('Unavailable')."</label>";
+                            echo "<label for='unavailable-{$day}' class='form-check-label'>".esc_html__('Unavailable', 'wpcb_booking')."</label>";
                         echo "</div>";
                         echo "<div class='form-check form-check-inline'>";
                             echo "<input type='radio' id='booked-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='booked' ".checked($status == 'booked', 1, false)."/>";
-                            echo "<label for='booked-{$day}' class='form-check-label'>".esc_html__('Booked')."</label>";
+                            echo "<label for='booked-{$day}' class='form-check-label'>".esc_html__('Booked', 'wpcb_booking')."</label>";
                         echo "</div>";
                     echo "</div>";
                     echo "<div class='form-group'>";
                         echo "<input type='hidden' class='date-day' value='{$day}' />";
                         echo "<label for='description-{$date}'>".esc_html__('Description')."</label>";
-                        echo "<textarea id='description-{$date}' class='form-control' name='dates[{$date}][description]'>{$description}</textarea>";
+                        echo "<textarea id='description-{$date}' class='form-control' name='dates[{$date}][description]'>".wp_kses_data($description)."</textarea>";
                     echo "</div>";
                 echo "</div>";
                 echo "<div class='modal-footer'>";
@@ -288,10 +337,12 @@ function wpcb_get_calendar_dates($calendar_id, $booking_id=null)
                         if ($data['status'] == 'booked' && !empty($booking_ids)) {
                             foreach ($booking_ids as $booking_id) {
                                 if (get_post_status($booking_id) != 'publish') {
-                                    $data['status'] = 'available';
                                     $booking_id_idx = array_search($booking_id, $booking_ids);
                                     unset($booking_ids[$booking_id_idx]);
                                 }
+                            }
+                            if (empty($booking_ids)) {
+                                $data['status'] = 'available';
                             }
                         }
                         $data['booking_ids'] = $booking_ids;
@@ -314,7 +365,7 @@ function wpcb_get_date_value($calendar_id, $date, $key)
             $result = $dates[$date][$key];
         }
     }
-    return $result;
+    return wpcb_sanitize_data($result);
 }
 
 function wpcb_get_template( $file_name, $admin_tpl=false ){
@@ -411,6 +462,92 @@ function wpcb_get_default_client_mail_footer()
     $footer = "<p>Your Company Address here..</p>";
     return $footer;
 }
+
+function wpcb_get_order_details_html($booking_id)
+{
+    $order_id = get_post_meta($booking_id, 'order_id', true)?? 0;
+    $rate_type = strtolower(get_post_meta($booking_id, 'rate_type', true));
+    $booked_rates = get_post_meta($booking_id, "booked_{$rate_type}", true);
+    $booked_extras = get_post_meta($booking_id, "booked_extras", true) ?? array();
+    $booked_amount = get_post_meta($booking_id, 'booked_amount', true) ?? 0;
+    $booked_dates = get_post_meta($booking_id, 'booked_dates', true);
+    if (function_exists('wpcr_is_enable_payment') && wpcr_is_enable_payment()) {
+        $booked_dates = array();
+    }
+
+    if ($order_id) {
+        $order = new WC_Order($order_id);
+        $order_edit_url = esc_url($order->get_edit_order_url());
+        $order_number = $order->get_order_number();
+        $booked_amount = $order->get_total();
+    }
+
+    $html = "<table class='table table-bordered p-0 m-0'>";
+        $html .= "<tbody class='border-0'>";
+            if ($order_id) {
+                $html .= "<tr>";
+                    $html .= "<td width='40%'><strong>".esc_html__('WooCommerce Order', 'wpcr_rates')."</strong></td>";
+                    $html .= "<td width='60%'><a href='{$order_edit_url}'>#{$order_number}</a></td>";
+                $html .= "</tr>";
+            }        
+            if (!empty($booked_rates)) {
+                $html .= "<tr>";
+                    $html .= "<td><strong>" .esc_html__('Selected Date/Time', 'wpcb_booking'). "</strong></td>";
+                    $html .= "<td>";
+                    if ($rate_type == 'hourly') {
+                        foreach ($booked_rates as $_date => $_hourly) {
+                            $html .= "<p class='mb-1'>".date('F d', strtotime($_date)) ."</p>";
+                            $html .= "<ul class='bullets'>";
+                            foreach ($_hourly as $_hour) {
+                                $html .= "<li class='mb-1'>".esc_html($_hour['from'])." - ".esc_html($_hour['to'])." (".wpcb_number_format($_hour['rate'], true).")</li>";
+                            }
+                            $html .= "</ul>";
+                        }            
+                    } else {
+                        $html .= "<ul class='bullets m-0'>";
+                        foreach ($booked_rates as $_date => $_rate) {            
+                            $html .= "<li class='mb-0'>".date('F d', strtotime($_date))." - ".wpcb_number_format($_rate, true)."</li>"; 
+                        }
+                        $html .= "</ul>";
+                    }
+                    $html .= "</td>";
+                $html .= "</tr>";
+            } 
+            if (!empty($booked_dates)) {
+                $html .= "<tr>";
+                    $html .= "<td><strong>" .esc_html__('Booked Dates', 'wpcb_booking'). "</strong></td>";
+                    $html .= "<td>";
+                        $html .= "<ul class='bullets m-0'>";
+                        foreach ($booked_dates as $_date) {            
+                            $html .= "<li class='mb-0'>".date('F d', strtotime($_date))."</li>"; 
+                        }
+                        $html .= "</ul>";
+                    $html .= "</td>";
+                $html .= "</tr>";
+            }  
+            if (!empty($booked_extras)) {
+                $html .= "<tr>";
+                    $html .= "<td><strong>" .esc_html(wpcr_order_summary_extras_label()). "</strong></td>";
+                    $html .= "<td>";
+                        $html .= "<ul class='bullets m-0'>";
+                        foreach ($booked_extras as $label => $price) {                    
+                            $html .= "<li class='mb-0'> ".esc_html($label)." - ".esc_html(wpcb_number_format($price, true))."</li>";                    
+                        }
+                        $html .= "</ul>";
+                    $html .= "</td>";
+                $html .= "</tr>";
+            }     
+            if (empty($booked_dates)) {
+                $html .= "<tr>";
+                    $html .= "<td><strong>".esc_html__('Total', 'wpcr_rates')."</strong></td>";
+                    $html .= "<td><strong>".esc_html(wpcb_number_format($booked_amount, true))."</strong></td>";
+                $html .= "</tr>";
+            }            
+        $html .= "</tbody>";
+    $html .= "</table>";
+    return $html;
+}
+
 function wpcb_error_handler($error)
 {
     echo "<p class='wpcb-error'> {$error} </p>";
@@ -438,6 +575,7 @@ function wpcb_export_file_format_list(){
 	);
 	return apply_filters( 'wpcb_export_file_format_list', $extension );
 }
+
 
 function wpcb_create_report($headers, $data, $format='csv')
 {

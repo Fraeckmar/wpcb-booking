@@ -1,8 +1,8 @@
 <div id="calendar-list" class="wrap wpcb-booking">
 <h2><?php esc_html_e('Calendars', 'wpcb_booking'); ?> <a class="btn btn-sm btn-outline-secondary" href="<?php echo esc_url(admin_url("admin.php?page={$submenu_slug}&action=new")) ?>"><?php esc_html_e('Add New', 'wpcb_booking'); ?></a></h2>
 <ul class="subsubsub">
-	<li class="active"><a class="<?php echo $active_current ?>" href="<?php echo esc_url(admin_url("admin.php?page={$submenu_slug}")) ?>">Active <span class="count">(<?php echo $active_count ?>)</span></a> |</li>
-	<li class="trash"><a class="<?php echo $trash_current ?>" href="<?php echo esc_url(admin_url("admin.php?page={$submenu_slug}&status=trash")) ?>">Trash <span class="count">(<?php echo $trash_count ?>)</span></a></li>
+	<li class="active"><a class="<?php echo $active_current ?>" href="<?php echo esc_url(admin_url("admin.php?page={$submenu_slug}")) ?>">Active <span class="count">(<?php esc_html_e($active_count) ?>)</span></a> |</li>
+	<li class="trash"><a class="<?php echo $trash_current ?>" href="<?php echo esc_url(admin_url("admin.php?page={$submenu_slug}&status=trash")) ?>">Trash <span class="count">(<?php esc_html_e($trash_count) ?>)</span></a></li>
 </ul>
 <table class="table table-striped">
     <thead class="thead-light">

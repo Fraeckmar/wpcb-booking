@@ -13,6 +13,7 @@ class WPCB_Setting{
         if (isset($_POST['wpcb_setting_nonce_field']) && wp_verify_nonce($_POST['wpcb_setting_nonce_field'], 'wpcb_setting_nonce_action')) {
             if (!empty($this->setting_keys())) {
                 foreach ($_POST as $key => $value) {
+                    $value = wpcb_sanitize_data($value);
                     if (in_array($key, $this->setting_keys()) && !empty($value)) {
                         $this->update_setting($key, $value);
                     }
@@ -23,8 +24,8 @@ class WPCB_Setting{
 
         // Save calendar
         if (isset($_POST['wpcb_calendar_update_field']) && wp_verify_nonce($_POST['wpcb_calendar_update_field'], 'wpcb_calendar_update_action')) {
-            $calendar_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
-            $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';
+            $calendar_id = isset($_GET['id']) && is_numeric($_GET['id']) ? sanitize_text_field($_GET['id']) : 0;
+            $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
             if ($action) {
                 $post_args = array(
                     'post_title' => sanitize_text_field($_POST['post_title'])
@@ -78,9 +79,9 @@ class WPCB_Setting{
             && wp_verify_nonce($_POST['wpcb_booking_update_nonce_field'], 'wpcb_booking_update_nonce_action')
         ) {
             $booking_fields = $wpcb_booking->fields();
-            $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? esc_attr($_GET['id']) : 0;
+            $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? sanitize_text_field($_GET['id']) : 0;
             $calendar_id = $booking_id ? get_post_meta($booking_id, 'calendar_id', true) : 0;
-            $action = isset($_GET['action']) ? esc_attr($_GET['action']) : '';
+            $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
             $old_status = '';
             if ($action) {
                 $post_args = array(
@@ -98,7 +99,7 @@ class WPCB_Setting{
                     $post_args['post_status'] = 'publish';
                     $post_args['post_author'] = get_current_user_id();
                     $booking_id = wp_insert_post($post_args);
-                    $calendar_id = isset($_POST['calendar_id']) ? $_POST['calendar_id'] : 0;
+                    $calendar_id = isset($_POST['calendar_id']) ? sanitize_text_field($_POST['calendar_id']) : 0;
                     update_post_meta($booking_id, 'calendar_id', $calendar_id);
 
                     if ($calendar_id && $booking_id) {
@@ -122,10 +123,7 @@ class WPCB_Setting{
                         foreach ($booking_fields as $section => $fields) {
                             foreach ($fields as $field_key => $field) {
                                 if (isset($_POST[$field['key']])) {
-                                    $meta_value = $_POST[$field['key']];
-                                    if (in_array($field['type'], ['text','textarea','number','email','url'])) {
-                                        $meta_value = sanitize_text_field($_POST[$field['key']]);
-                                    }
+                                    $meta_value = wpcb_sanitize_data($_POST[$field['key']]);
                                     update_post_meta($booking_id, sanitize_key($field['key']), $meta_value);
                                 }
                             }
@@ -173,7 +171,7 @@ class WPCB_Setting{
                 $result = $settings;
             }
         }
-        return $result;
+        return wpcb_sanitize_data($result);
     }
 
     function menus()
@@ -553,7 +551,7 @@ class WPCB_Setting{
                     if (is_array($shortcode_value)) {
                         $str_value = "<ul style='list-style-type: disc; list-style-position: inside;'>";
                         foreach ($shortcode_value as $_value) {
-                            $str_value .= "<li>{$_value}</li>";
+                            $str_value .= "<li>".esc_html($_value)."</li>";
                         }
                         $str_value .= '</ul>';
                         $shortcode_value = $str_value;
@@ -613,7 +611,7 @@ class WPCB_Setting{
                 $html .= "<td align='center' style='font-size: 10px;'>{$email_footer}</td>";
             $html .= "</tr>";
         $html .= "</table>";
-        return apply_filters('wpcb_email_content_html', $html);
+        return wp_kses(apply_filters('wpcb_email_content_html', $html), wpcb_allowed_html_tags());
     }
 
     function wpcb_get_email_header_html()

@@ -1,5 +1,5 @@
 <div id="booking-post" class="wrap wpcb-booking">
-    <form method="POST" action="" id="wpcb-booking-admin-form" class="<?php echo wpcb_get_rate_type(); ?>">
+    <form method="POST" action="" id="wpcb-booking-admin-form" class="<?php esc_html_e(wpcb_get_rate_type()); ?>">
         <?php wp_nonce_field('wpcb_booking_update_nonce_action', 'wpcb_booking_update_nonce_field') ?>
         <h3><?php echo esc_html(ucwords($action).' Booking'); ?></h3>
         <div class="form-group">
@@ -57,7 +57,7 @@
                     <div class="col-sm-12 mb-4">
                         <div class="card p-0 mw-100">
                             <div class="card-header"> 
-                                <h5 class="h4 m-0"><?php echo $section; ?> </h5>
+                                <h5 class="h4 m-0"><?php esc_html_e($section); ?> </h5>
                             </div>
                             <div class="card-body">
                                 <?php foreach ($fields as $field): ?>
@@ -70,14 +70,14 @@
             <?php endif; ?>
 
             <!-- Order Detetails -->
-            <?php if (!empty($order_html) && $booked_amount): ?>
+            <?php if (!empty($order_html)): ?>
                 <div class="col-sm-12 mb-4">
                     <div class="card p-0 mw-100">
                         <div class="card-header"> 
-                            <h5 class="h4 m-0"><?php esc_html_e('Order Details', 'wpcb_booking'); ?> </h5>
+                            <h5 class="h4 m-0"><?php esc_html_e('Booked Details', 'wpcb_booking'); ?> </h5>
                         </div>
                         <div class="card-body p-0">
-                            <?php echo $order_html; ?>
+                            <?php echo wp_kses($order_html, wpcb_allowed_html_tags()); ?>
                         </div>
                     </div>
                 </div>

@@ -41,7 +41,7 @@ class WPCB_Booking_Asset
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'datetime_picker_format' => $datetime_picker_format,
                 'date_picker_format' => $date_picker_format,
-                'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? $_POST['wpcb_notification'] : [],
+                'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? wpcb_sanitize_data($_POST['wpcb_notification']) : [],
                 'is_debug' => isset($_GET['debug']) ? 1 : 0
             );
 
@@ -86,7 +86,7 @@ class WPCB_Booking_Asset
         $translation = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'is_admin' => is_admin() ? true : false,
-            'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? $_POST['wpcb_notification'] : [],
+            'notification' => isset($_POST['wpcb_notification']) && !empty($_POST['wpcb_notification']) ? wpcb_sanitize_data($_POST['wpcb_notification']) : [],
             'datetime_picker_format' => $datetime_picker_format,
             'date_picker_format' => $date_picker_format,
             'customer_field' => wpcb_customer_field(),
