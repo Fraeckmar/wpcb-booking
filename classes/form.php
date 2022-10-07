@@ -17,7 +17,7 @@ class WPCB_Form
                 $form_attribute .= $name.'='.$value.' ';
             }            
         }
-        echo '<form '.$form_attribute.'>';
+        echo '<form '.esc_html($form_attribute).'>';
     }
 
     public static function end()
@@ -35,7 +35,7 @@ class WPCB_Form
 
     public static function gen_button($key, $label, $type='submit', $class='btn btn-sm btn-primary', $extras='')
     {
-        echo "<button type='{$type}' id='{$key}' class='{$class}' {$extras}> {$label} </button>";
+        echo "<button type='".esc_html($type)."' id='".esc_html($key)."' class='".esc_html($class)."' ".esc_html($extras)."> ".esc_html($label)." </button>";
     }
 
     public static function gen_field($field=array(), $with_form_group=false)
@@ -68,15 +68,15 @@ class WPCB_Form
             if (!in_array($type, ['checkbox', 'radio'])) {
                 $html_field .= '<div class="form-group '.esc_html($group_class).'">';
                 if (!empty($label)) {
-                    $html_field .= '<label for="'.$key.'" class="form-label d-block">'.wp_kses_data($label).'</label>';
+                    $html_field .= '<label for="'.esc_html($key).'" class="form-label d-block">'.wp_kses_data($label).'</label>';
                 }  
                 if ($description) {
-                    $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
+                    $html_field .= '<p class="description small text-secondary mb-1">'.wp_kses_data($description).'</p>';
                 }
             }            
         } else {
             if ($description) {
-                $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
+                $html_field .= '<p class="description small text-secondary mb-1">'.wp_kses_data($description).'</p>';
             }
         }
 
@@ -94,7 +94,7 @@ class WPCB_Form
                     $brakets = '[]';
                 }
                 
-                $html_field .= '<select id="'.$key.'" name="'.$field_name.$brakets.'" class="custom-select '.$field_class.'" placeholder="'.$placeholder.'" '.$extras.'>';
+                $html_field .= '<select id="'.$key.'" name="'.esc_html($field_name.$brakets).'" class="custom-select '.esc_html($field_class).'" placeholder="'.esc_html($placeholder).'" '.esc_html($extras).'>';
                     $html_field .= '<option value=""> '.esc_html($placeholder).' </option>';
                 if (!empty($options) && is_array($options)) {
                     $is_assoc_arr = !array_key_exists(0, $options);
@@ -120,7 +120,7 @@ class WPCB_Form
                     $html_field .= '<label class="form-label d-block">'.esc_html($label).'</label>';
                 }            
                 if (!empty($options)) {
-                    $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
+                    $html_field .= '<p class="description small text-secondary mb-1">'.wp_kses_data($description).'</p>';
                     $counter = 0;
                     $is_assoc_arr = !array_key_exists(0, $options);
                     foreach ($options as $op_val => $op_label) {
@@ -142,7 +142,7 @@ class WPCB_Form
                 break;
             case 'date':
                 $placeholder = strtolower(wpcb_datepicker_format());
-                $html_field .= '<input type="text" id="'.esc_html($key).'" class="'.$field_class.'" name="'.$field_name.'" value="'.$value.'" placeholder="'.$placeholder.'" '.$extras.'/>';
+                $html_field .= '<input type="text" id="'.esc_html($key).'" class="'.esc_html($field_class).'" name="'.esc_html($field_name).'" value="'.esc_html($value).'" placeholder="'.esc_html($placeholder).'" '.esc_html($extras).'/>';
                 break;
             default: 
                 $html_field .= '<input type="'.esc_html($type).'" id="'.esc_html($key).'" class="'.esc_html($field_class).'" name="'.esc_html($field_name).'" value="'.esc_html($value).'" placeholder="'.esc_html($placeholder).'" '.esc_html($extras).'/>';

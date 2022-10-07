@@ -148,7 +148,7 @@ function wpcb_get_rate_type()
 function wpcb_set_notification($msg, $alert_type='success', $icon='check')
 {
     $_POST['wpcb_notification'] = [
-        'message' => sanitize_text_field($msg),
+        'message' => wp_kses_data($msg),
         'type' => $alert_type,
         'icon' => $icon
     ];
@@ -218,7 +218,7 @@ function wpcb_draw_date_modal($calendar_id, $date, $day)
     $day = esc_html($day);
     $status = wpcb_get_date_value($calendar_id, $date, 'status');
     $enabled_days = wpcb_sanitize_data($wpcb_setting->get_setting('general', 'enable_days'));
-    $day_name = wpcb_get_day_name($date);
+    $day_name = esc_html(wpcb_get_day_name($date));
     if (empty($status)) {
         $status = !in_array($day_name, $enabled_days) ? 'unavailable' : 'available';
     }
@@ -452,7 +452,7 @@ function wpcb_get_default_admin_mail_footer()
 }
 function wpcb_get_default_client_mail_body()
 {
-    $body = "<p> Hi {".wpcb_customer_field('key')."},</p>\n";
+    $body = "<p> Hi {".esc_html(wpcb_customer_field('key'))."},</p>\n";
     $body .= "<p>Your booking number <strong>#{wpcb_booking_number}</strong> was place to {wpcb_booking_status} status.</p>\n";
     $body .= "<p>Thank you for getting in touch with us.</p>";
     return $body;
@@ -487,7 +487,7 @@ function wpcb_get_order_details_html($booking_id)
             if ($order_id) {
                 $html .= "<tr>";
                     $html .= "<td width='40%'><strong>".esc_html__('WooCommerce Order', 'wpcr_rates')."</strong></td>";
-                    $html .= "<td width='60%'><a href='{$order_edit_url}'>#{$order_number}</a></td>";
+                    $html .= "<td width='60%'><a href='".esc_url($order_edit_url)."'>#".esc_html($order_number)."</a></td>";
                 $html .= "</tr>";
             }        
             if (!empty($booked_rates)) {
@@ -499,14 +499,14 @@ function wpcb_get_order_details_html($booking_id)
                             $html .= "<p class='mb-1'>".date('F d', strtotime($_date)) ."</p>";
                             $html .= "<ul class='bullets'>";
                             foreach ($_hourly as $_hour) {
-                                $html .= "<li class='mb-1'>".esc_html($_hour['from'])." - ".esc_html($_hour['to'])." (".wpcb_number_format($_hour['rate'], true).")</li>";
+                                $html .= "<li class='mb-1'>".esc_html($_hour['from'])." - ".esc_html($_hour['to'])." (".esc_html(wpcb_number_format($_hour['rate'], true)).")</li>";
                             }
                             $html .= "</ul>";
                         }            
                     } else {
                         $html .= "<ul class='bullets m-0'>";
                         foreach ($booked_rates as $_date => $_rate) {            
-                            $html .= "<li class='mb-0'>".date('F d', strtotime($_date))." - ".wpcb_number_format($_rate, true)."</li>"; 
+                            $html .= "<li class='mb-0'>".date('F d', strtotime($_date))." - ".esc_html(wpcb_number_format($_rate, true))."</li>"; 
                         }
                         $html .= "</ul>";
                     }
@@ -655,14 +655,14 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     
     $echo = '';
     $previous = intval($page) - 1;
-    $previous = esc_attr( get_pagenum_link($previous) );
+    $previous = wpcb_sanitize_data( get_pagenum_link($previous) );
     
-    $firstpage = esc_attr( get_pagenum_link(1) );
+    $firstpage = wpcb_sanitize_data( get_pagenum_link(1) );
     if ( $firstpage && (1 != $page) ) {
-        $echo .= '<li class="previous page-item"><a class="page-link waves-effect waves-effect" href="' . $firstpage . '">' . esc_html__( 'First', 'wpcb_booking' ) . '</a></li>';
+        $echo .= '<li class="previous page-item"><a class="page-link waves-effect waves-effect" href="' . esc_url($firstpage) . '">' . esc_html__( 'First', 'wpcb_booking' ) . '</a></li>';
     }
     if ( $previous && (1 != $page) ) {
-        $echo .= '<li class="page-item" ><a class="page-link waves-effect waves-effect" href="' . $previous . '" title="' . esc_html__( 'previous', 'wpcb_booking') . '">' . $args['previous_string'] . '</a></li>';
+        $echo .= '<li class="page-item" ><a class="page-link waves-effect waves-effect" href="' . esc_url($previous) . '" title="' . esc_html__( 'previous', 'wpcb_booking') . '">' . wpcb_sanitize_data($args['previous_string']) . '</a></li>';
     }
     
     if ( !empty($min) && !empty($max) ) {
@@ -670,20 +670,20 @@ function wpcb_bootstrap_pagination( $args = array() ) {
             if ($page == $i) {
                 $echo .= '<li class="page-item active"><span class="page-link waves-effect waves-effect">' . str_pad( (int)$i, 2, '0', STR_PAD_LEFT ) . '</span></li>';
             } else {
-                $echo .= sprintf( '<li class="page-item"><a class="page-link waves-effect waves-effect" href="%s">%002d</a></li>', esc_attr( get_pagenum_link($i) ), $i );
+                $echo .= sprintf( '<li class="page-item"><a class="page-link waves-effect waves-effect" href="%s">%002d</a></li>', sanitize_text_field( get_pagenum_link($i) ), $i );
             }
         }
     }
     
     $next = intval($page) + 1;
-    $next = esc_attr( get_pagenum_link($next) );
+    $next = wpcb_sanitize_data( get_pagenum_link($next) );
     if ($next && ($count != $page) ) {
-        $echo .= '<li class="page-item"><a class="page-link waves-effect waves-effect" href="' . $next . '" title="' . esc_html__( 'next', 'wpcb_booking') . '">' . $args['next_string'] . '</a></li>';
+        $echo .= '<li class="page-item"><a class="page-link waves-effect waves-effect" href="' . esc_url($next) . '" title="' . esc_html__( 'next', 'wpcb_booking') . '">' . $args['next_string'] . '</a></li>';
     }
     
-    $lastpage = esc_attr( get_pagenum_link($count) );
+    $lastpage = wpcb_sanitize_data( get_pagenum_link($count) );
     if ( $lastpage ) {
-        $echo .= '<li class="next page-item"><a class="page-link waves-effect waves-effect" href="' . $lastpage . '">' . esc_html__( 'Last', 'wpcb_booking' ) . '</a></li>';
+        $echo .= '<li class="next page-item"><a class="page-link waves-effect waves-effect" href="' . esc_url($lastpage) . '">' . esc_html__( 'Last', 'wpcb_booking' ) . '</a></li>';
     }
     if ( isset($echo) ) {
         echo $args['before_output'] . $echo . $args['after_output'];

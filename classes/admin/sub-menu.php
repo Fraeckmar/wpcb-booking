@@ -113,7 +113,7 @@ class WPCB_Sub_Menu
             $q_wpcb_booking_status = isset($_POST['wpcb_booking_status']) ? sanitize_text_field($_POST['wpcb_booking_status']) : '';
             $date_from = isset($_POST['date_from']) ? sanitize_text_field($_POST['date_from']) : '';
             $date_to = isset($_POST['date_to']) ? sanitize_text_field($_POST['date_to']) : '';
-            $post_per_page = isset($_GET['post_per_page']) && is_numeric($_GET['post_per_page']) ? esc_attr($_GET['post_per_page'])  : 10;
+            $post_per_page = isset($_GET['post_per_page']) && is_numeric($_GET['post_per_page']) ? sanitize_text_field($_GET['post_per_page'])  : 10;
             $entries_options = array(10, 25, 50);
             $meta_query = array();
 
@@ -133,7 +133,7 @@ class WPCB_Sub_Menu
             }
             
             $meta_query = apply_filters( 'wpcb_manage_booking_meta_query', $meta_query);
-            $paged = isset($_GET['paged']) && is_numeric($_GET['paged']) ? esc_attr($_GET['paged']) : 1; 
+            $paged = isset($_GET['paged']) && is_numeric($_GET['paged']) ? sanitize_text_field($_GET['paged']) : 1; 
             
             $active_args = array(
                 'post_type'         => 'wpcb_booking',
@@ -185,7 +185,7 @@ class WPCB_Sub_Menu
             $record_end     = $number_records < $basis ? $number_records : $basis ;
             $record_start   = $basis - ( $post_per_page - 1 );   
             $bulk_update_label = $is_active_booking ? 'Bulk Trash' : 'Bulk Delete';
-            $status_attr = $is_active_booking ? 'data-status="trash"' : 'data-status="delete"';
+            $status_attr = $is_active_booking ? 'data-status=trash' : 'data-status=delete';
             $template = wpcb_get_template('manage-booking.tpl', true);
             require_once $template;
         }

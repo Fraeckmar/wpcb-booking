@@ -87,9 +87,9 @@ class Calendar {
             <?php if($this->has_header_nav): ?>
             <div class="card-header calendar-header">
                 <div class="d-flex justify-content-center align-items-center">
-                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1 <?php echo $this->active_month <= $current_month && !is_admin() ? 'disabled': ''?>" data-date="<?php echo $prev_date; ?>"><i class="fa fa-2x fa-angle-left"></i></span>
+                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1 <?php echo $this->active_month <= $current_month && !is_admin() ? 'disabled': ''?>" data-date="<?php esc_html_e($prev_date) ?>"><i class="fa fa-2x fa-angle-left"></i></span>
                     <span id="month-year" class="h3 mx-5 m-0"><?php echo strtoupper($calendar_header); ?></span>
-                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1" data-date="<?php echo $next_date; ?>"><i class="fa fa-2x fa-angle-right"></i></span>
+                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1" data-date="<?php esc_html_e($next_date); ?>"><i class="fa fa-2x fa-angle-right"></i></span>
                 </div>
             </div>
             <?php endif; ?>
@@ -97,12 +97,12 @@ class Calendar {
                 <div class="days">
                     <!-- Days name -->
                     <?php foreach($days as $day): ?>
-                        <div class="day_name"><?php echo $day; ?></div>
+                        <div class="day_name"><?php esc_html_e($day); ?></div>
                     <?php endforeach; ?>
 
                     <!-- Past Days -->
                     <?php for($i=$first_day_of_week; $i>0; $i--): ?>
-                        <div class="day_num ignore"><?php echo $num_days_last_month-$i+1; ?></div>
+                        <div class="day_num ignore"><?php esc_html_e($num_days_last_month-$i+1); ?></div>
                     <?php endfor; ?>
 
                     <!-- Current month days -->
@@ -122,7 +122,7 @@ class Calendar {
                         $booked_icon_class =  $status == 'booked' ? 'd-block' : 'd-none';
                         $day_class .= " {$status}";                    
                         ?>
-                        <div class="day_num <?php echo $day_class; ?>">
+                        <div class="day_num <?php esc_html_e($day_class); ?>">
                             <input type="checkbox" name="dates[]" value="<?php esc_html_e($i); ?>" class="date-check d-none"/>
                             <?php do_action('wpcb_before_calendar_date', $this->calendar_id, $current_date, $i, $status); ?>
                             <span class="day_num_val"><?php esc_html_e($i); ?></span>
@@ -161,7 +161,7 @@ class Calendar {
                                 <div class="row">
                                     <?php foreach($this->get_years() as $_year): ?>
                                         <?php $active_class = $_year == $this->active_year ? 'active' : ''; ?>
-                                        <div class="year item col-3 text-center <?php esc_html_e($active_class); ?>" data-value="<?php esc_html_e($_year) ?>" data-next="months" data-item="year"> <?php echo esc_html_e($_year) ?> </div>
+                                        <div class="year item col-3 text-center <?php esc_html_e($active_class); ?>" data-value="<?php esc_html_e($_year) ?>" data-next="months" data-item="year"> <?php esc_html_e($_year) ?> </div>
                                     <?php endforeach; ?>
                                 </div>
                             </div>

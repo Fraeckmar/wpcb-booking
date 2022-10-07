@@ -1,5 +1,5 @@
 <?php 
-$sub_tab = isset($_GET['sub']) ? esc_attr($_GET['sub']) : 'admin';
+$sub_tab = isset($_GET['sub']) ? wpcb_sanitize_data($_GET['sub']) : 'admin';
 ?>
 <div class="wpcb-sub-navigation wpcb-navigation mb-3">
     <div class="btn-group btn-group-toggle sub-menus" data-toggle="buttons">

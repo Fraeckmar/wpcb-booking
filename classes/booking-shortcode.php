@@ -39,12 +39,7 @@ class Booking_Shortcode
                     foreach ($wpcb_booking->fields() as $section => $fields) {
                         foreach ($fields as $field_key => $field) {
                             if (isset($_POST[$field['key']])) {
-                                if (is_array($_POST[$field['key']])) {
-                                    array_walk($_POST[$field['key']], function($value) use ($field){
-                                        $value = !is_array($value) ? sanitize_text_field($_POST[$field['key']]) : $value;
-                                    });
-                                }
-                                update_post_meta($booking_id, $field['key'], $_POST[$field['key']]);
+                                update_post_meta($booking_id, $field['key'], wpcb_sanitize_data($_POST[$field['key']]));
                             }
                         }                        
                     }

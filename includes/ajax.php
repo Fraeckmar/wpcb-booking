@@ -4,10 +4,10 @@ add_action('wp_ajax_nopriv_wpcb_calendar_change', 'wpcb_calendar_change_callback
 function wpcb_calendar_change_callback()
 {
     require(WPCB_BOOKING_PLUGIN_PATH. 'classes/calendar.php');
-    $date = isset($_GET['date']) ? esc_attr($_GET['date']) : '';
-    $calendar_id = isset($_GET['calendar_id']) && is_numeric($_GET['calendar_id']) ? esc_attr($_GET['calendar_id']) : 0;
-    $booking_id = isset($_GET['booking_id']) && is_numeric($_GET['booking_id']) ? esc_attr($_GET['booking_id']) : 0;
-    $has_date_modal = isset($_GET['has_date_modal']) ? esc_attr($_GET['has_date_modal']) : false;
+    $date = isset($_GET['date']) ? wpcb_sanitize_data($_GET['date']) : '';
+    $calendar_id = isset($_GET['calendar_id']) && is_numeric($_GET['calendar_id']) ? wpcb_sanitize_data($_GET['calendar_id']) : 0;
+    $booking_id = isset($_GET['booking_id']) && is_numeric($_GET['booking_id']) ? wpcb_sanitize_data($_GET['booking_id']) : 0;
+    $has_date_modal = isset($_GET['has_date_modal']) ? wpcb_sanitize_data($_GET['has_date_modal']) : false;
     $calendar = new Calendar($calendar_id, $date);
     $calendar->has_date_modal = $has_date_modal;
     $calendar->set_booking_id($booking_id);
@@ -22,8 +22,8 @@ add_action('wp_ajax_nopriv_wpcb_selectize_search', 'wp_ajax_wpcb_selectize_searc
 function wp_ajax_wpcb_selectize_search_callback()
 {
     global $wpdb;
-    $meta_key = isset($_GET['meta_key']) ? esc_attr($_GET['meta_key']) : '';
-    $q = isset($_GET['q']) ? esc_attr($_GET['q']) : '';
+    $meta_key = isset($_GET['meta_key']) ? wpcb_sanitize_data($_GET['meta_key']) : '';
+    $q = isset($_GET['q']) ? wpcb_sanitize_data($_GET['q']) : '';
 
     $sql = "SELECT DISTINCT pm.meta_value FROM `{$wpdb->prefix}posts` p INNER JOIN `{$wpdb->prefix}postmeta` pm ON p.ID = pm.post_id WHERE p.post_type = 'wpcb_booking' AND p.post_status = 'publish' AND pm.meta_key = '{$meta_key}' AND pm.meta_value LIKE '%{$q}%'";
     $results = $wpdb->get_results($sql);
@@ -152,8 +152,8 @@ function wpcb_generate_report_callback()
 add_action('wp_ajax_wpcb_bulk_trash_booking', 'wpcb_bulk_trash_booking_callback');
 function wpcb_bulk_trash_booking_callback()
 {
-    $booking_ids = isset($_POST['booking_ids']) ? $_POST['booking_ids'] : array();
-    $post_status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+    $booking_ids = isset($_POST['booking_ids']) ? wpcb_sanitize_data($_POST['booking_ids']) : array();
+    $post_status = isset($_POST['status']) ? wp_kses_data($_POST['status']) : '';
     $result = array('status' => 'error');
     if (empty($booking_ids) || empty($post_status)) {
         if (empty($booking_ids)) {

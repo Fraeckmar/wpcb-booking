@@ -55,7 +55,7 @@ class WPCB_Setting{
                                 $calendar_dates = get_post_meta($calendar_id, $field_key, true);
                                 $calendar_dates = !empty($calendar_dates) ? $calendar_dates : [];
                                 if ($field_key == 'dates') {
-                                    $_dates = $_POST[$field_key];
+                                    $_dates = wpcb_sanitize_data($_POST[$field_key]);
                                     foreach ($_dates as $_date => $_data) {
                                         $calendar_dates[$year_month][$_date]['status'] = $_data['status'] ?? '';
                                         $calendar_dates[$year_month][$_date]['description'] = $_data['description'] ?? '';
@@ -106,7 +106,7 @@ class WPCB_Setting{
                         $selected_full_dates = [];
                         $year_month = isset($_POST['year_month']) ? sanitize_text_field($_POST['year_month']) : '';
                         $calendar_dates = wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $_POST);
-                        $selected_dates = isset($_POST['dates']) ? sanitize_text_field($_POST['dates']) : [];
+                        $selected_dates = isset($_POST['dates']) ? wpcb_sanitize_data($_POST['dates']) : [];
                         if (!empty($selected_dates)) {
                             foreach ($selected_dates as $selected_date) {
                                 $_date = date(wpcb_date_format(), strtotime("{$year_month}-{$selected_date}"));
@@ -209,7 +209,7 @@ class WPCB_Setting{
                 }
             }
         }
-        return apply_filters('wpcb_setting_keys', $setting_keys);
+        return wpcb_sanitize_data(apply_filters('wpcb_setting_keys', $setting_keys));
     }
 
     function fields()
@@ -217,7 +217,7 @@ class WPCB_Setting{
         global $wpcb_booking, $wpcb_setting;
         $pages = wpcb_get_pages();
         $booking_status_list = $wpcb_setting->wpcb_status_list();
-        $admin_default_email = get_option('new_admin_email');
+        $admin_default_email = sanitize_email(get_option('new_admin_email'));
         $wpcb_setting_fields = array(
             'general' => array(
                 array(
@@ -642,7 +642,7 @@ class WPCB_Setting{
         $setting_status =  $wpcb_setting->get_setting('general', 'booking_status_list');
         $setting_status = empty($setting_status) ? array() : $setting_status;
         $status_list = array_unique(array_merge($status_list, $setting_status));
-        return apply_filters('wpcb_status_list', $status_list);
+        return wpcb_sanitize_data(apply_filters('wpcb_status_list', $status_list));
     }
 }
 $wpcb_setting = new WPCB_Setting();

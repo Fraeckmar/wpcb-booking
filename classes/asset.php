@@ -27,10 +27,10 @@ class WPCB_Booking_Asset
             wp_enqueue_script('calendar-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/calendar.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('calendar-helper-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/calendar-helper.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('calendar-common-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/calendar-common.js', array('jquery'), WPCB_BOOKING_VERSION, true);
-            wp_enqueue_script('moment-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/moment.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('bootstrap-datetimepicker-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/bootstrap-datetimepicker.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('datetime-picker-helper', WPCB_BOOKING_PLUGIN_URL. 'assets/js/datetime-picker-helper.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('custom-script-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/custom-script.js', array('calendar-js'), WPCB_BOOKING_VERSION, true);
+            
 
             $datetime_picker_format = new stdClass;
             $datetime_picker_format->format = 'hh:mm a';
@@ -65,6 +65,7 @@ class WPCB_Booking_Asset
         wp_enqueue_style('bootstrap-datetimepicker-css', WPCB_BOOKING_PLUGIN_URL. 'assets/css/bootstrap-datetimepicker.min.css', array(), WPCB_BOOKING_VERSION);
         
         // Scripts
+        wp_enqueue_script('moment');
         wp_enqueue_script('bootstrap', WPCB_BOOKING_PLUGIN_URL. 'assets/js/bootstrap.min.js', array('jquery'), WPCB_BOOKING_VERSION );
         wp_enqueue_script('calendar-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/calendar.js', array('jquery'), WPCB_BOOKING_VERSION );
         wp_enqueue_script('calendar-helper-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/calendar-helper.js', array('jquery'), WPCB_BOOKING_VERSION );
@@ -74,7 +75,6 @@ class WPCB_Booking_Asset
         wp_enqueue_script('calendar-common-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/calendar-common.js', array('jquery'), WPCB_BOOKING_VERSION, true);
         wp_enqueue_script('repeater-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/repeater.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
         wp_enqueue_script('repeater-helper-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/repeater-helper.js', array('jquery'), WPCB_BOOKING_VERSION, true);
-        wp_enqueue_script('moment-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/moment.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
         wp_enqueue_script('bootstrap-datetimepicker-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/bootstrap-datetimepicker.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
         wp_enqueue_script('datetime-picker-helper', WPCB_BOOKING_PLUGIN_URL. 'assets/js/datetime-picker-helper.js', array('jquery'), WPCB_BOOKING_VERSION, true);
 

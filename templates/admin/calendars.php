@@ -42,7 +42,7 @@
                 </td>
                 <td><?php echo get_the_date(); ?></td>
                 <td><?php echo get_the_author(); ?></td>
-                <td class="shortcode"><span><?php echo '[wpcb_booking id='.$shortcode_id.']'; ?> <i class="fa fa-info-circle" role="button" title="Copy and paste this shortcode into your page."></i></span></td>
+                <td class="shortcode"><span><?php esc_html_e('[wpcb_booking id='.$shortcode_id.']'); ?> <i class="fa fa-info-circle" role="button" title="Copy and paste this shortcode into your page."></i></span></td>
             </tr>
             <?php endwhile; ?>
         <?php else: ?>

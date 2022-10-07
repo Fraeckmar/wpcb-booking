@@ -1,5 +1,5 @@
 <div id="booking-list" class="wrap wpcb-booking advanced-table">
-    <h2><?php esc_html_e('Manage Booking', 'wpcb_booking'); ?> <a class="btn btn-sm btn-outline-secondary" href="<?php echo esc_url(admin_url('admin.php?page=wpcb-booking&action=new')) ?>"><?php esc_html_e('Add New', 'wpcb_booking'); ?></a></h2>
+    <h2><?php esc_html_e('Manage Booking', 'wpcb_booking'); ?> <a class="btn btn-sm btn-outline-secondary" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}&action=new")) ?>"><?php esc_html_e('Add New', 'wpcb_booking'); ?></a></h2>
     <div id="booking-status-nav" class="row">
         <ul class="subsubsub col-sm-12">
             <li class="active"><a class="<?php echo $is_active_booking ? 'current' : '' ?>" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}")) ?>">Active <span class="count">(<?php esc_html_e($active_count) ?>)</span></a> |</li>
@@ -46,7 +46,7 @@
         <div class="col-md-10 col-sm-12">
             <div class="tablenav top">
                 <?php if(!$is_active_booking): ?>
-                    <?php echo WPCB_Form::gen_button('', 'Restore', 'button', 'bulk-update-post-status btn btn-sm btn-info', 'data-status="publish"'); ?>
+                    <?php echo WPCB_Form::gen_button('', 'Restore', 'button', 'bulk-update-post-status btn btn-sm btn-info', 'data-status=publish'); ?>
                 <?php endif; ?>
                 <?php echo WPCB_Form::gen_button('', $bulk_update_label, 'button', 'bulk-update-post-status btn btn-sm btn-danger', $status_attr); ?>
                 <?php do_action('table_nav_top'); ?>
@@ -58,6 +58,9 @@
                 <?php echo WPCB_Form::gen_field(array('key'=>'post_per_page', 'type'=>'select', 'label'=>'Show Entries', 'options'=>$entries_options, 'value'=>$post_per_page, 'class'=>'ml-2', 'group_class'=>'form-group row justify-content-end form-inline m-0', 'required'=>true), true); ?>
                 <?php if(isset($_GET['paged'])): ?>
                     <?php WPCB_Form::draw_hidden('paged', sanitize_text_field($_GET['paged'])) ?>
+                <?php endif; ?>
+                <?php if(isset($_GET['status'])): ?>
+                    <?php WPCB_Form::draw_hidden('status', sanitize_text_field($_GET['status'])) ?>
                 <?php endif; ?>                      
             </form>
         </div>
