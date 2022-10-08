@@ -79,13 +79,13 @@ class WPCB_Setting{
             && wp_verify_nonce($_POST['wpcb_booking_update_nonce_field'], 'wpcb_booking_update_nonce_action')
         ) {
             $booking_fields = $wpcb_booking->fields();
-            $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? sanitize_text_field($_GET['id']) : 0;
+            $booking_id = isset($_GET['id']) && is_numeric($_GET['id']) ? wpcb_sanitize_data($_GET['id']) : 0;
             $calendar_id = $booking_id ? get_post_meta($booking_id, 'calendar_id', true) : 0;
-            $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
+            $action = isset($_GET['action']) ? wpcb_sanitize_data($_GET['action']) : '';
             $old_status = '';
             if ($action) {
                 $post_args = array(
-                    'post_title' => sanitize_text_field($_POST['post_title'])
+                    'post_title' => wpcb_sanitize_data($_POST['post_title'])
                 );
 
                 if ($action == 'edit') {
@@ -99,18 +99,18 @@ class WPCB_Setting{
                     $post_args['post_status'] = 'publish';
                     $post_args['post_author'] = get_current_user_id();
                     $booking_id = wp_insert_post($post_args);
-                    $calendar_id = isset($_POST['calendar_id']) ? sanitize_text_field($_POST['calendar_id']) : 0;
+                    $calendar_id = isset($_POST['calendar_id']) ? wpcb_sanitize_data($_POST['calendar_id']) : 0;
                     update_post_meta($booking_id, 'calendar_id', $calendar_id);
 
                     if ($calendar_id && $booking_id) {
                         $selected_full_dates = [];
-                        $year_month = isset($_POST['year_month']) ? sanitize_text_field($_POST['year_month']) : '';
-                        $calendar_dates = wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $_POST);
+                        $year_month = isset($_POST['year_month']) ? wpcb_sanitize_data($_POST['year_month']) : '';
+                        $calendar_dates = wpcb_sanitize_data(wpcb_get_new_calendar_dates($calendar_id, $year_month, $booking_id, $_POST));
                         $selected_dates = isset($_POST['dates']) ? wpcb_sanitize_data($_POST['dates']) : [];
                         if (!empty($selected_dates)) {
                             foreach ($selected_dates as $selected_date) {
                                 $_date = date(wpcb_date_format(), strtotime("{$year_month}-{$selected_date}"));
-                                $selected_full_dates[] = $_date;
+                                $selected_full_dates[] = wpcb_sanitize_data($_date);
                             }
                         }
                         update_post_meta($calendar_id, 'dates', $calendar_dates);
@@ -130,7 +130,7 @@ class WPCB_Setting{
                         }
                     }
                     if (isset($_POST['wpcb_booking_status'])) {
-                        update_post_meta($booking_id, 'wpcb_booking_status', sanitize_text_field($_POST['wpcb_booking_status']));
+                        update_post_meta($booking_id, 'wpcb_booking_status', wpcb_sanitize_data($_POST['wpcb_booking_status']));
                     }
                     do_action('wpcb_after_save_booking_post', $booking_id, $_POST, $old_status);
                     $notif_action = $action == 'edit' ? 'updated' : 'added';

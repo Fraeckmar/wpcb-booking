@@ -20,7 +20,7 @@ class Booking_Shortcode
             $selected_dates = isset($_POST['dates']) ? wpcb_sanitize_data($_POST['dates']) : [];
             $selected_full_dates = [];
             $post_args = array(
-                'post_title' => sanitize_text_field(apply_filters('wpcb_booking_number', $wpcb_booking->wpcb_gen_booking_number())),
+                'post_title' => wpcb_sanitize_data(apply_filters('wpcb_booking_number', $wpcb_booking->wpcb_gen_booking_number())),
                 'post_type' => 'wpcb_booking',
                 'post_status' => 'publish'
             );
@@ -33,7 +33,7 @@ class Booking_Shortcode
                 }
                 update_post_meta($calendar_id, 'dates', $calendar_dates);
                 update_post_meta($booking_id, 'calendar_id', $calendar_id);
-                update_post_meta($booking_id, 'wpcb_booking_status', sanitize_text_field(wpcb_booking_default_status()));
+                update_post_meta($booking_id, 'wpcb_booking_status', wpcb_booking_default_status());
                 update_post_meta($booking_id, 'booked_dates', $selected_full_dates);
                 if (!empty($wpcb_booking->fields())) {
                     foreach ($wpcb_booking->fields() as $section => $fields) {
@@ -54,7 +54,7 @@ class Booking_Shortcode
         $attributes = shortcode_atts(array(
             'id' => 0
         ), $atts, 'wpcb_booking');
-        $shortcode_id = sanitize_text_field($attributes['id']);
+        $shortcode_id = wpcb_sanitize_data($attributes['id']);
         $calendar_id = wpcb_get_calendar_id($shortcode_id);
         if (wpcb_is_calendar_exist($calendar_id)) {
             $form_fields = !empty($wpcb_booking->fields()) ? $wpcb_booking->fields() : array();

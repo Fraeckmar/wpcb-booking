@@ -88,7 +88,7 @@ class Calendar {
             <div class="card-header calendar-header">
                 <div class="d-flex justify-content-center align-items-center">
                     <span role="button" class="btn btn-sm update waves-effect px-2 py-1 <?php echo $this->active_month <= $current_month && !is_admin() ? 'disabled': ''?>" data-date="<?php esc_html_e($prev_date) ?>"><i class="fa fa-2x fa-angle-left"></i></span>
-                    <span id="month-year" class="h3 mx-5 m-0"><?php echo strtoupper($calendar_header); ?></span>
+                    <span id="month-year" class="h3 mx-5 m-0"><?php esc_html_e(strtoupper($calendar_header)); ?></span>
                     <span role="button" class="btn btn-sm update waves-effect px-2 py-1" data-date="<?php esc_html_e($next_date); ?>"><i class="fa fa-2x fa-angle-right"></i></span>
                 </div>
             </div>

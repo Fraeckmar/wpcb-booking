@@ -135,9 +135,9 @@ function wpcb_generate_report_callback()
         $report_headers[] = esc_html__('Booked Date(s)', 'wpcb_booking');
         $report_headers[] = esc_html__('Amount', 'wpcb_booking');
     }
-    $format = apply_filters('wpcb_report_file_format', 'csv');
-    $report_headers = apply_filters('wpcb_report_hearders', $report_headers, $custom_fields);
-    $report_data = apply_filters('wpcb_report_data', $report_data, $posts);
+    $format = wpcb_sanitize_data(apply_filters('wpcb_report_file_format', 'csv'));
+    $report_headers = wpcb_sanitize_data(apply_filters('wpcb_report_hearders', $report_headers, $custom_fields));
+    $report_data = wpcb_sanitize_data(apply_filters('wpcb_report_data', $report_data, $posts));
     $report_file_url = wpcb_create_report($report_headers, $report_data, $format);   
     if (!array_key_exists('error', $result) && $report_file_url) {
         $result['status'] = 'ok';

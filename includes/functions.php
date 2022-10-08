@@ -2,15 +2,15 @@
 // Filters
 function wpcb_booking_default_status()
 {
-    return apply_filters('wpcb_booking_default_status', 'Pending Approval');
+    return wpcb_sanitize_data(apply_filters('wpcb_booking_default_status', 'Pending Approval'));
 }
 function wpcb_date_format()
 {
-    return apply_filters('wpcb_date_format', "Y-m-d");
+    return wpcb_sanitize_data(apply_filters('wpcb_date_format', "Y-m-d"));
 }
 function wpcb_datepicker_format()
 {
-    return apply_filters('wpcb_datepicker_format', 'YYYY-MM-DD');
+    return wpcb_sanitize_data(apply_filters('wpcb_datepicker_format', 'YYYY-MM-DD'));
 }
 function wpcb_woo_is_active()
 {
@@ -223,31 +223,31 @@ function wpcb_draw_date_modal($calendar_id, $date, $day)
         $status = !in_array($day_name, $enabled_days) ? 'unavailable' : 'available';
     }
     $description = wpcb_get_date_value($calendar_id, $date, 'description');
-    echo "<div class='modal status-modal fade text-left' id='modal-day-{$day}' data-bs-backdrop='static' role='dialog' aria-labelledby='dateModalLabel-{$day}' aria-hidden='true'>";
+    echo "<div class='modal status-modal fade text-left' id='modal-day-".esc_html($day)."' data-bs-backdrop='static' role='dialog' aria-labelledby='dateModalLabel-".esc_html($day)."' aria-hidden='true'>";
         echo "<div class='modal-dialog modal-dialog-centered'>";
             echo "<div class='modal-content'>";
                 echo "<div class='modal-header'>";
-                    echo "<h5 class='modal-title' id='dateModalLabel-{$day}'></h5>";
+                    echo "<h5 class='modal-title' id='dateModalLabel-".esc_html($day)."'></h5>";
                 echo "</div>";
                 echo "<div class='modal-body'>";
                     echo "<div class='form-group'>";
                         echo "<div class='form-check form-check-inline'>";
-                            echo "<input type='radio' id='available-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='available' ".checked($status == 'available', 1, false)."/>";
-                            echo "<label for='available-{$day}' class='form-check-label'>".esc_html__('Available', 'wpcb_booking')."</label>";
+                            echo "<input type='radio' id='available-".esc_html($day)."' class='form-check-input status' name='dates[".esc_html($day)."][status]' value='available' ".checked($status == 'available', 1, false)."/>";
+                            echo "<label for='available-".esc_html($day)."' class='form-check-label'>".esc_html__('Available', 'wpcb_booking')."</label>";
                         echo "</div>";
                         echo "<div class='form-check form-check-inline'>";
-                            echo "<input type='radio' id='unavailable-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='unavailable' ".checked($status == 'unavailable', 1, false)."/>";
-                            echo "<label for='unavailable-{$day}' class='form-check-label'>".esc_html__('Unavailable', 'wpcb_booking')."</label>";
+                            echo "<input type='radio' id='unavailable-".esc_html($day)."' class='form-check-input status' name='dates[".esc_html($day)."][status]' value='unavailable' ".checked($status == 'unavailable', 1, false)."/>";
+                            echo "<label for='unavailable-".esc_html($day)."' class='form-check-label'>".esc_html__('Unavailable', 'wpcb_booking')."</label>";
                         echo "</div>";
                         echo "<div class='form-check form-check-inline'>";
-                            echo "<input type='radio' id='booked-{$day}' class='form-check-input status' name='dates[{$date}][status]' value='booked' ".checked($status == 'booked', 1, false)."/>";
-                            echo "<label for='booked-{$day}' class='form-check-label'>".esc_html__('Booked', 'wpcb_booking')."</label>";
+                            echo "<input type='radio' id='booked-".esc_html($day)."' class='form-check-input status' name='dates[".esc_html($day)."][status]' value='booked' ".checked($status == 'booked', 1, false)."/>";
+                            echo "<label for='booked-".esc_html($day)."' class='form-check-label'>".esc_html__('Booked', 'wpcb_booking')."</label>";
                         echo "</div>";
                     echo "</div>";
                     echo "<div class='form-group'>";
-                        echo "<input type='hidden' class='date-day' value='{$day}' />";
-                        echo "<label for='description-{$date}'>".esc_html__('Description')."</label>";
-                        echo "<textarea id='description-{$date}' class='form-control' name='dates[{$date}][description]'>".wp_kses_data($description)."</textarea>";
+                        echo "<input type='hidden' class='date-day' value='".esc_html($day)."' />";
+                        echo "<label for='description-".esc_html($day)."'>".esc_html__('Description')."</label>";
+                        echo "<textarea id='description-".esc_html($day)."' class='form-control' name='dates[".esc_html($day)."][description]'>".wp_kses_data($description)."</textarea>";
                     echo "</div>";
                 echo "</div>";
                 echo "<div class='modal-footer'>";
@@ -273,7 +273,7 @@ function wpcb_get_calendar_id($shortcode_id)
                             WHERE p.post_type = 'wpcb_calendar' AND p.post_status = 'publish' AND pm.meta_key = 'shortcode_id' AND pm.meta_value = %d", 
     $shortcode_id);
     $result = $wpdb->get_var($sql);
-    return $result;
+    return wpcb_sanitize_data($result);
 }
 
 function get_next_shortcode_id()
@@ -628,7 +628,7 @@ function wpcb_bootstrap_pagination( $args = array() ) {
     if ( !$args['custom_query'] )
         $args['custom_query'] = @$GLOBALS['wp_query'];
     $count = (int) $args['custom_query']->max_num_pages;
-    $page = isset($_GET['paged']) && is_numeric($_GET['paged']) ? $_GET['paged'] : 1;
+    $page = isset($_GET['paged']) && is_numeric($_GET['paged']) ? wpcb_sanitize_data($_GET['paged']) : 1;
     $ceil  = ceil( $args['range'] / 2 );
     
     if ( $count <= 1 )

@@ -62,10 +62,10 @@ class WPCB_Sub_Menu
 
     function wpcb_manage_booking_display_notif()
     {
-        $booking_id = isset($_GET['id']) && is_numeric(sanitize_text_field($_GET['id'])) ? sanitize_text_field($_GET['id']) : 0;
+        $booking_id = isset($_GET['id']) && is_numeric(wpcb_sanitize_data($_GET['id'])) ? wpcb_sanitize_data($_GET['id']) : 0;
         $booking_title = $booking_id ? get_the_title($booking_id) : '';
-        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
-        if ($booking_id && !empty($action) && !in_array($action, array('edit')) && isset($_GET['page']) && sanitize_text_field($_GET['page']) == wpcb_plugin_slug()) {
+        $action = isset($_GET['action']) ? wpcb_sanitize_data($_GET['action']) : '';
+        if ($booking_id && !empty($action) && !in_array($action, array('edit')) && isset($_GET['page']) && wpcb_sanitize_data($_GET['page']) == wpcb_plugin_slug()) {
             if ($action == 'untrash') {
                 $action = 'restored';
             }
@@ -75,18 +75,18 @@ class WPCB_Sub_Menu
 
     function wpcb_online_booking_callback()
     {
-        if (!isset($_GET['page']) && sanitize_text_field($_GET['page']) != wpcb_plugin_slug()) { 
+        $plugin_slug = wpcb_plugin_slug();
+        if (!isset($_GET['page']) && wpcb_sanitize_data($_GET['page']) != $plugin_slug) { 
             return false; 
         }
         require_once(WPCB_BOOKING_PLUGIN_PATH. 'classes/calendar.php');
         global $wpcb_booking, $wpcb_setting;        
 
-        $plugin_slug = wpcb_plugin_slug();
-        $booking_id = isset($_GET['id']) && is_numeric(sanitize_text_field($_GET['id'])) ? sanitize_text_field($_GET['id']) : 0;
+        $booking_id = isset($_GET['id']) && is_numeric(wpcb_sanitize_data($_GET['id'])) ? wpcb_sanitize_data($_GET['id']) : 0;
         $booking_title = $booking_id ? get_the_title($booking_id) : '';
         $calendar_id = get_post_meta($booking_id, 'calendar_id', true);
-        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';      
-        $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';  
+        $action = isset($_GET['action']) ? wpcb_sanitize_data($_GET['action']) : '';      
+        $status = isset($_GET['status']) ? wpcb_sanitize_data($_GET['status']) : '';  
         $is_active_booking = !in_array($action, array('untrash', 'delete')) && !in_array($status, array('trash', 'untrash')) ? true : false;
 
         if (in_array($action, array('new', 'edit'))) {
@@ -264,8 +264,8 @@ class WPCB_Sub_Menu
                 wp_redirect(esc_url(admin_url("admin.php?page={$submenu_slug}")));
             }       
             
-            $s_calendar = isset($_POST['s']) ? sanitize_text_field($_POST['s'])  : '';
-            $post_per_page = isset($_POST['post_per_page']) && is_numeric($_POST['post_per_page']) ? sanitize_text_field($_POST['post_per_page'])  : -1;
+            $s_calendar = isset($_POST['s']) ? wpcb_sanitize_data($_POST['s'])  : '';
+            $post_per_page = isset($_POST['post_per_page']) && is_numeric($_POST['post_per_page']) ? wpcb_sanitize_data($_POST['post_per_page'])  : -1;
             $meta_query = array();	    
             $meta_query = apply_filters( 'wpcb_booking_calendar_meta_query', $meta_query );
             $active_args = array(

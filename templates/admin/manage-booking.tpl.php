@@ -115,9 +115,9 @@
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td><?php echo esc_html($meta_values[wpcb_customer_field('key')]) ?? '' ?></td>
+                        <td><?php esc_html_e($meta_values[wpcb_customer_field('key')]) ?? '' ?></td>
                         <td><?php echo $booked_dates_str; ?></td>
-                        <td><span class="status"><?php echo esc_html($meta_values['wpcb_booking_status']) ?? '' ?></span></td>
+                        <td><span class="status"><?php esc_html_e($meta_values['wpcb_booking_status']) ?? '' ?></span></td>
                         <td><?php echo get_the_date(wpcb_date_format()) ?></td>
                         <?php do_action('wpcb_manage_booking_after_column_data', $booking_id); ?>
                     </tr>

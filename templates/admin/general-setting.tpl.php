@@ -1,7 +1,7 @@
 <div class="row">
     <?php if (!empty($general_setting_fields)): ?>
         <?php foreach ($general_setting_fields as $section_field): ?>
-            <?php  $section_heading = array_key_exists('heading', $section_field) ? sanitize_text_field($section_field['heading']) : ''; ?>
+            <?php  $section_heading = array_key_exists('heading', $section_field) ? wpcb_sanitize_data($section_field['heading']) : ''; ?>
             <div class="col-md-12">
                 <h5><?php esc_html_e($section_heading); ?></h5>
             </div>

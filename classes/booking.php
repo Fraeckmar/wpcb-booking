@@ -3,9 +3,9 @@
 class WPCB_Booking {
     public function fields($booking_id=0)
     {
-        $wpcb_customer_name = $booking_id ? sanitize_text_field(get_post_meta($booking_id, 'wpcb_customer_name', true)) : '';
+        $wpcb_customer_name = $booking_id ? wpcb_sanitize_data(get_post_meta($booking_id, 'wpcb_customer_name', true)) : '';
         $wpcb_customer_email = $booking_id ? sanitize_email(get_post_meta($booking_id, 'wpcb_customer_email', true)) : '';
-        $wpcb_customer_phone_number = $booking_id ? sanitize_text_field(get_post_meta($booking_id, 'wpcb_customer_phone_number', true)) : '';
+        $wpcb_customer_phone_number = $booking_id ? wpcb_sanitize_data(get_post_meta($booking_id, 'wpcb_customer_phone_number', true)) : '';
 
         $wpcb_booking_fields = array(
             'Personal Information' => array(
