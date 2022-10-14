@@ -1,5 +1,5 @@
 <?php 
-$current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general';
+$current_tab = isset($_GET['tab']) ? wpcb_sanitize_data($_GET['tab']) : 'general';
 ?>
 <div id="wpcb-navigation" class="wpcb-navigation">
     <ul class="d-flex flex-row m-0">

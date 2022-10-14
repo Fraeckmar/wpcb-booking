@@ -215,7 +215,6 @@ function wpcb_get_calendar_list()
 function wpcb_draw_date_modal($calendar_id, $date, $day)
 {
     global $wpcb_setting, $wpcb_booking;
-    $day = esc_html($day);
     $status = wpcb_get_date_value($calendar_id, $date, 'status');
     $enabled_days = wpcb_sanitize_data($wpcb_setting->get_setting('general', 'enable_days'));
     $day_name = esc_html(wpcb_get_day_name($date));
@@ -376,7 +375,7 @@ function wpcb_get_template( $file_name, $admin_tpl=false ){
 
     if (!file_exists($template_path)) {
         $template_path  = WPCB_BOOKING_PLUGIN_PATH."templates/{$admin_folder}{$file_name}.php";
-        $template_path  = apply_filters( "wpcb_locate_template_{$file_slug}", $template_path );
+        $template_path  = apply_filters("wpcb_locate_template_{$file_slug}", $template_path);
     }
 	return $template_path;
 }
@@ -408,6 +407,7 @@ function wpcb_update_calendar_in_book_delete($booking_id)
     $booked_dates = get_post_meta($booking_id, 'booked_dates', true);
     $booked_dates = !empty($booked_dates) ? wpcb_format_calendar_data($booked_dates) : array();
     $calendar_dates = wpcb_get_calendar_dates($calendar_id);
+    
     if (!empty($booked_dates) && !empty($calendar_dates)) {
         foreach ($booked_dates as $year_month => $booked_date) {
             if (array_key_exists($year_month, $calendar_dates)) {

@@ -48,8 +48,8 @@ class WPCB_Form
         $key = array_key_exists('key', $field) ? sanitize_key($field['key']) : '';
         $value = array_key_exists('value', $field) ? wpcb_sanitize_data($field['value']) : '';
         $placeholder = array_key_exists('placeholder', $field) ? sanitize_text_field($field['placeholder']) : '';
-        $class = array_key_exists('class', $field) ? $field['class'] : '';
-        $group_class = array_key_exists('group_class', $field) ? $field['group_class'] : '';
+        $class = array_key_exists('class', $field) ? wpcb_sanitize_data($field['class']) : '';
+        $group_class = array_key_exists('group_class', $field) ? wpcb_sanitize_data($field['group_class']) : '';
         $options = array_key_exists('options', $field) ? wpcb_sanitize_data($field['options']) : '';
         $field_class = $wpcb_booking->field_class()[$type];
         $setting = array_key_exists('setting', $field) ? $field['setting'] : '';
@@ -94,7 +94,7 @@ class WPCB_Form
                     $brakets = '[]';
                 }
                 
-                $html_field .= '<select id="'.$key.'" name="'.esc_html($field_name.$brakets).'" class="custom-select '.esc_html($field_class).'" placeholder="'.esc_html($placeholder).'" '.esc_html($extras).'>';
+                $html_field .= '<select id="'.esc_html($key).'" name="'.esc_html($field_name.$brakets).'" class="custom-select '.esc_html($field_class).'" placeholder="'.esc_html($placeholder).'" '.esc_html($extras).'>';
                     $html_field .= '<option value=""> '.esc_html($placeholder).' </option>';
                 if (!empty($options) && is_array($options)) {
                     $is_assoc_arr = !array_key_exists(0, $options);

@@ -22,26 +22,26 @@
                 $wpcb_calendars->the_post(); 
                 $booking_id = get_the_ID();
                 $shortcode_id = get_post_meta($booking_id, 'shortcode_id', true);
-                $edit_url = esc_url(admin_url("admin.php?page={$submenu_slug}&action=edit&id={$booking_id}"));
-                $trash_url = esc_url(admin_url("admin.php?page={$submenu_slug}&action=trash&id={$booking_id}"));
-                $restore_url = esc_url(admin_url("admin.php?page={$submenu_slug}&action=untrash&id={$booking_id}"));
-                $delete_url = esc_url(admin_url("admin.php?page={$submenu_slug}&action=delete&id={$booking_id}"));
+                $edit_url = admin_url("admin.php?page={$submenu_slug}&action=edit&id={$booking_id}");
+                $trash_url = admin_url("admin.php?page={$submenu_slug}&action=trash&id={$booking_id}");
+                $restore_url = admin_url("admin.php?page={$submenu_slug}&action=untrash&id={$booking_id}");
+                $delete_url = admin_url("admin.php?page={$submenu_slug}&action=delete&id={$booking_id}");
             ?>
             <tr>
                 <td>
                     <a class="row-title" href="<?php echo $edit_url ?>"><?php echo get_the_title()?></a>
                     <div class="row-actions">
                         <?php if($status == 'trash'): ?>
-                            <span class="untrash"><a href="<?php echo $restore_url ?>"><?php esc_html_e('Restore', 'wpcb_calendar') ?></a> | </span>
-                            <span class="trash"><a href="<?php echo $delete_url ?>"><?php esc_html_e('Delete Permanently', 'wpcb_calendar') ?></a> </span>
+                            <span class="untrash"><a href="<?php echo esc_url($restore_url) ?>"><?php esc_html_e('Restore', 'wpcb_calendar') ?></a> | </span>
+                            <span class="trash"><a href="<?php echo esc_url($delete_url) ?>"><?php esc_html_e('Delete Permanently', 'wpcb_calendar') ?></a> </span>
                         <?php else: ?>
-                            <span class="edit"><a href="<?php echo $edit_url ?>"><?php esc_html_e('Edit', 'wpcb_calendar') ?></a> | </span>
-                            <span class="trash"><a href="<?php echo $trash_url ?>"><?php esc_html_e('Trash', 'wpcb_calendar') ?></a> </span>
+                            <span class="edit"><a href="<?php echo esc_url($edit_url) ?>"><?php esc_html_e('Edit', 'wpcb_calendar') ?></a> | </span>
+                            <span class="trash"><a href="<?php echo esc_url($trash_url) ?>"><?php esc_html_e('Trash', 'wpcb_calendar') ?></a> </span>
                         <?php endif; ?>
                     </div>
                 </td>
-                <td><?php echo get_the_date(); ?></td>
-                <td><?php echo get_the_author(); ?></td>
+                <td><?php esc_html_e(get_the_date()); ?></td>
+                <td><?php esc_html(get_the_author()); ?></td>
                 <td class="shortcode"><span><?php esc_html_e('[wpcb_booking id='.$shortcode_id.']'); ?> <i class="fa fa-info-circle" role="button" title="Copy and paste this shortcode into your page."></i></span></td>
             </tr>
             <?php endwhile; ?>

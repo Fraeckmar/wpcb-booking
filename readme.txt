@@ -14,6 +14,8 @@ Booking Calendar and Notification is a plug-in designed for easy booking to your
 = Core Plugin Features =
 
 * Booking Form - using shortcode
+* Set/Manage Calendar Availability, Unavailability and Booked
+* Multiple Calendars
 * Manage Bookings
 * Booking Settings
 * Calendar Settings
@@ -23,7 +25,7 @@ Booking Calendar and Notification is a plug-in designed for easy booking to your
 = Premium Features =
 
 * [Fully customizable form fields]
-* [Daily or Hourly Rates and Booking]
+* [Daily or Hourly Rates Booking]
 * [Online Payment integrated with WooCommerce]
 
 Contact Skype: franciscomaribao98

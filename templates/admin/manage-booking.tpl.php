@@ -95,23 +95,23 @@
                                 $booked_dates_str .= "<span class='booked-date'>".esc_html($booked_date)."</span><br>";
                             }
                         }
-                        $edit_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=edit&id={$booking_id}"));
-                        $trash_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=trash&id={$booking_id}"));
-                        $restore_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=untrash&id={$booking_id}"));
-                        $delete_url = esc_url(admin_url("admin.php?page={$plugin_slug}&action=delete&id={$booking_id}"));
+                        $edit_url = admin_url("admin.php?page={$plugin_slug}&action=edit&id={$booking_id}");
+                        $trash_url = admin_url("admin.php?page={$plugin_slug}&action=trash&id={$booking_id}");
+                        $restore_url = admin_url("admin.php?page={$plugin_slug}&action=untrash&id={$booking_id}");
+                        $delete_url = admin_url("admin.php?page={$plugin_slug}&action=delete&id={$booking_id}");
                     ?>
                     <tr>
                         <td><input type="checkbox" class="booking-item" value="<?php esc_html_e($booking_id); ?>"/></td>
                         <?php do_action('wpcb_manage_booking_before_column_data', $booking_id); ?>
                         <td>
-                        <a class="row-title" href="<?php echo $edit_url ?>"><?php echo get_the_title()?></a>
+                        <a class="row-title" href="<?php echo esc_url($edit_url) ?>"><?php esc_html_e(get_the_title()) ?></a>
                             <div class="row-actions">
                                 <?php if($is_active_booking): ?>
-                                    <span class="edit"><a href="<?php echo $edit_url ?>"><?php esc_html_e('Edit', 'wpcb_calendar') ?></a> | </span>
-                                    <span class="trash"><a href="<?php echo $trash_url ?>"><?php esc_html_e('Trash', 'wpcb_calendar') ?></a> </span>
+                                    <span class="edit"><a href="<?php echo esc_url($edit_url) ?>"><?php esc_html_e('Edit', 'wpcb_calendar') ?></a> | </span>
+                                    <span class="trash"><a href="<?php echo esc_url($trash_url) ?>"><?php esc_html_e('Trash', 'wpcb_calendar') ?></a> </span>
                                 <?php else: ?>
-                                    <span class="untrash"><a href="<?php echo $restore_url ?>"><?php esc_html_e('Restore', 'wpcb_calendar') ?></a> | </span>
-                                    <span class="trash"><a href="<?php echo $delete_url ?>"><?php esc_html_e('Delete Permanently', 'wpcb_calendar') ?></a> </span>
+                                    <span class="untrash"><a href="<?php echo esc_url($restore_url) ?>"><?php esc_html_e('Restore', 'wpcb_calendar') ?></a> | </span>
+                                    <span class="trash"><a href="<?php echo esc_url($delete_url) ?>"><?php esc_html_e('Delete Permanently', 'wpcb_calendar') ?></a> </span>
                                 <?php endif; ?>
                             </div>
                         </td>
