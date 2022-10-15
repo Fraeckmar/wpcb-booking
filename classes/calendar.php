@@ -75,11 +75,11 @@ class Calendar {
         $current_month = date('m');
         ?>
         <?php do_action('wpcb_before_calendar'); ?>
-        <input type="hidden" name="year_month" value="<?php esc_html_e($year_month); ?>"/>
-        <input type="hidden" id="month-name" value="<?php esc_html_e(date('F')); ?>">
-        <input type="hidden" id="calendar_id" name="calendar_id" value="<?php esc_html_e($this->calendar_id); ?>"/>
-        <input type="hidden" id="booking_id" name="booking_id" value="<?php esc_html_e($this->booking_id); ?>"/>
-        <input type="hidden" id="go_to_date" data-year="<?php esc_html_e($this->active_year) ?>" data-month="<?php esc_html_e($this->active_month) ?>"/>
+        <input type="hidden" name="year_month" value="<?php echo esc_html($year_month); ?>"/>
+        <input type="hidden" id="month-name" value="<?php echo esc_html(date('F')); ?>">
+        <input type="hidden" id="calendar_id" name="calendar_id" value="<?php echo esc_html($this->calendar_id); ?>"/>
+        <input type="hidden" id="booking_id" name="booking_id" value="<?php echo esc_html($this->booking_id); ?>"/>
+        <input type="hidden" id="go_to_date" data-year="<?php echo esc_html($this->active_year) ?>" data-month="<?php echo esc_html($this->active_month) ?>"/>
         <?php if($this->has_date_modal): ?>
             <input type="hidden" id="has_date_modal" name="has_date_modal" value="true"/>
         <?php endif; ?>
@@ -87,9 +87,9 @@ class Calendar {
             <?php if($this->has_header_nav): ?>
             <div class="card-header calendar-header">
                 <div class="d-flex justify-content-center align-items-center">
-                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1 <?php echo $this->active_month <= $current_month && !is_admin() ? 'disabled': ''?>" data-date="<?php esc_html_e($prev_date) ?>"><i class="fa fa-2x fa-angle-left"></i></span>
-                    <span id="month-year" class="h3 mx-5 m-0"><?php esc_html_e(strtoupper($calendar_header)); ?></span>
-                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1" data-date="<?php esc_html_e($next_date); ?>"><i class="fa fa-2x fa-angle-right"></i></span>
+                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1 <?php echo $this->active_month <= $current_month && !is_admin() ? 'disabled': ''?>" data-date="<?php echo esc_html($prev_date) ?>"><i class="fa fa-2x fa-angle-left"></i></span>
+                    <span id="month-year" class="h3 mx-5 m-0"><?php echo esc_html(strtoupper($calendar_header)); ?></span>
+                    <span role="button" class="btn btn-sm update waves-effect px-2 py-1" data-date="<?php echo esc_html($next_date); ?>"><i class="fa fa-2x fa-angle-right"></i></span>
                 </div>
             </div>
             <?php endif; ?>
@@ -97,12 +97,12 @@ class Calendar {
                 <div class="days">
                     <!-- Days name -->
                     <?php foreach($days as $day): ?>
-                        <div class="day_name"><?php esc_html_e($day); ?></div>
+                        <div class="day_name"><?php echo esc_html($day); ?></div>
                     <?php endforeach; ?>
 
                     <!-- Past Days -->
                     <?php for($i=$first_day_of_week; $i>0; $i--): ?>
-                        <div class="day_num ignore"><?php esc_html_e($num_days_last_month-$i+1); ?></div>
+                        <div class="day_num ignore"><?php echo esc_html($num_days_last_month-$i+1); ?></div>
                     <?php endfor; ?>
 
                     <!-- Current month days -->
@@ -122,11 +122,11 @@ class Calendar {
                         $booked_icon_class =  $status == 'booked' ? 'd-block' : 'd-none';
                         $day_class .= " {$status}";                    
                         ?>
-                        <div class="day_num <?php esc_html_e($day_class); ?>">
-                            <input type="checkbox" name="dates[]" value="<?php esc_html_e($i); ?>" class="date-check d-none"/>
+                        <div class="day_num <?php echo esc_html($day_class); ?>">
+                            <input type="checkbox" name="dates[]" value="<?php echo esc_html($i); ?>" class="date-check d-none"/>
                             <?php do_action('wpcb_before_calendar_date', $this->calendar_id, $current_date, $i, $status); ?>
-                            <span class="day_num_val"><?php esc_html_e($i); ?></span>
-                            <span class="booked-status <?php esc_html_e($booked_icon_class) ?>"><i class="fa fa-check"></i></span>
+                            <span class="day_num_val"><?php echo esc_html($i); ?></span>
+                            <span class="booked-status <?php echo esc_html($booked_icon_class) ?>"><i class="fa fa-check"></i></span>
                             <?php
                                 if ($this->has_date_modal) {
                                     wpcb_draw_date_modal($this->calendar_id, $current_date, $i);
@@ -139,7 +139,7 @@ class Calendar {
                     <!-- Next month days -->
                     <?php for($i=1; $i<=(42-$num_days-max($first_day_of_week, 0)); $i++): ?>
                         <div class="day_num ignore">
-                            <?php esc_html_e($i); ?>
+                            <?php echo esc_html($i); ?>
                         </div>
                     <?php endfor; ?>
                 </div>
@@ -151,7 +151,7 @@ class Calendar {
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="text-center w-100"><?php esc_html_e('Go To'); ?></h5>
+                            <h5 class="text-center w-100"><?php esc_html_e('Go To', 'wpcb-booking'); ?></h5>
                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -161,7 +161,7 @@ class Calendar {
                                 <div class="row">
                                     <?php foreach($this->get_years() as $_year): ?>
                                         <?php $active_class = $_year == $this->active_year ? 'active' : ''; ?>
-                                        <div class="year item col-3 text-center <?php esc_html_e($active_class); ?>" data-value="<?php esc_html_e($_year) ?>" data-next="months" data-item="year"> <?php esc_html_e($_year) ?> </div>
+                                        <div class="year item col-3 text-center <?php echo esc_html($active_class); ?>" data-value="<?php echo esc_html($_year) ?>" data-next="months" data-item="year"> <?php echo esc_html($_year) ?> </div>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -172,7 +172,7 @@ class Calendar {
                                         $active = $_value == $this->active_month ? 'active' : ''; 
                                         $disabled = $_value < date('m') ? 'disabled' : '';
                                         ?>
-                                        <div class="month item col-3 text-center <?php esc_html_e($active).' '.esc_html($disabled); ?>" data-value="<?php esc_html_e($_value) ?>" data-next="done" data-item="month"> <?php esc_html_e(substr($_month, 0 , 3)) ?> </div>
+                                        <div class="month item col-3 text-center <?php esc_html($active.' '.$disabled); ?>" data-value="<?php echo esc_html($_value) ?>" data-next="done" data-item="month"> <?php echo esc_html(substr($_month, 0 , 3)) ?> </div>
                                     <?php endforeach; ?>
                                 </div>
                             </div>

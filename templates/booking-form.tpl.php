@@ -1,6 +1,6 @@
 <div class="wpcb-booking">
     <?php do_action('wpcb_before_booking_form') ?>
-    <form method="POST" id="wpcb-booking-form" class="<?php esc_html_e(wpcb_get_rate_type()); ?>">
+    <form method="POST" id="wpcb-booking-form" class="<?php echo esc_html(wpcb_get_rate_type()); ?>">
         <?php wp_nonce_field('wpcb_booking_nonce_action', 'wpcb_booking_nonce_field') ?>
         <div id="booking-info">
             <div class="calendar-container col-12 mb-3">
@@ -32,7 +32,7 @@
                         <div class="col-12 mb-4">
                             <div class="card">
                                 <div class="card-header"> 
-                                    <h5 class="h4 m-0"><?php esc_html_e($section); ?> </h5>
+                                    <h5 class="h4 m-0"><?php echo esc_html($section); ?> </h5>
                                 </div>
                                 <div class="card-body">
                                     <?php foreach ($fields as $field): ?>
@@ -46,7 +46,7 @@
             <?php endif; ?>
             <?php do_action('wpcb_after_booking_info', $calendar_id); ?>          
             <div class="col-12">
-                <button class="btn btn-primary waves-effect w-100 m-0"><?php esc_html_e('SUBMIT'); ?></button>
+                <button class="btn btn-primary waves-effect w-100 m-0"><?php esc_html_e('SUBMIT', 'wpcb_booking'); ?></button>
             </div>
         </div>
     </form>

@@ -616,7 +616,7 @@ class WPCB_Setting{
 
     function wpcb_get_email_header_html()
     {
-        $company_logo = $this->get_setting('general', 'company_logo');
+        $company_logo = esc_url($this->get_setting('general', 'company_logo'));
         $html = "<table width='100%'>";
             $styles = empty($company_logo) ? "padding: 10px; font-size: 22px;" : "font-size: 14px;";
             if (!empty($company_logo)) {

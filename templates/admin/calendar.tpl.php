@@ -1,7 +1,7 @@
 <div id="calendar-post" class="wrap wpcb-booking">
     <form method="POST" action="">
         <?php wp_nonce_field('wpcb_calendar_update_action', 'wpcb_calendar_update_field') ?>
-        <h3><?php esc_html_e(ucwords($action).' Calendar'); ?></h3>
+        <h3><?php echo esc_html(ucwords($action).' Calendar'); ?></h3>
         <div class="form-group">
             <input type="text" name="post_title" class="form-control" value="<?php esc_html_e($title); ?>">
         </div>
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="card p-3 text-right">
-                    <button type="submit" class="btn btn-info"><?php esc_html_e('Save') ?></button>
+                    <button type="submit" class="btn btn-info"><?php esc_html_e('Save', 'wpcb_booking') ?></button>
                 </div>
             </div>
         </div>

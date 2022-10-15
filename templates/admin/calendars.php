@@ -40,14 +40,14 @@
                         <?php endif; ?>
                     </div>
                 </td>
-                <td><?php esc_html_e(get_the_date()); ?></td>
-                <td><?php esc_html(get_the_author()); ?></td>
-                <td class="shortcode"><span><?php esc_html_e('[wpcb_booking id='.$shortcode_id.']'); ?> <i class="fa fa-info-circle" role="button" title="Copy and paste this shortcode into your page."></i></span></td>
+                <td><?php echo esc_html(get_the_date()); ?></td>
+                <td><?php echo esc_html(get_the_author()); ?></td>
+                <td class="shortcode"><span><?php echo esc_html('[wpcb_booking id='.$shortcode_id.']'); ?> <i class="fa fa-info-circle" role="button" title="Copy and paste this shortcode into your page."></i></span></td>
             </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="5"><?php esc_html_e('No Calendar Found!'); ?></td>
+                <td colspan="5"><?php esc_html_e('No Calendar Found!', 'wpcb_booking'); ?></td>
             </tr>
         <?php endif; ?>
         <?php wp_reset_postdata(); ?>

@@ -2,8 +2,8 @@
     <h2><?php esc_html_e('Manage Booking', 'wpcb_booking'); ?> <a class="btn btn-sm btn-outline-secondary" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}&action=new")) ?>"><?php esc_html_e('Add New', 'wpcb_booking'); ?></a></h2>
     <div id="booking-status-nav" class="row">
         <ul class="subsubsub col-sm-12">
-            <li class="active"><a class="<?php echo $is_active_booking ? 'current' : '' ?>" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}")) ?>">Active <span class="count">(<?php esc_html_e($active_count) ?>)</span></a> |</li>
-            <li class="trash"><a class="<?php echo $is_active_booking ? '' : 'current' ?>" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}&status=trash")) ?>">Trash <span class="count">(<?php esc_html_e($trash_count) ?>)</span></a></li>
+            <li class="active"><a class="<?php echo $is_active_booking ? 'current' : '' ?>" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}")) ?>">Active <span class="count">(<?php echo esc_html($active_count) ?>)</span></a> |</li>
+            <li class="trash"><a class="<?php echo $is_active_booking ? '' : 'current' ?>" href="<?php echo esc_url(admin_url("admin.php?page={$plugin_slug}&status=trash")) ?>">Trash <span class="count">(<?php echo esc_html($trash_count) ?>)</span></a></li>
         </ul>
     </div>
     <div class="row mb-2" id="booking-filter">
@@ -32,7 +32,7 @@
         <div class="col-lg-3 col-md-4 col-sm-12">
             <form method="POST">
                 <div class="input-group bg-white">
-                    <input type="text" class="form-control" name="q_booking" placeholder="Search Booking" required value="<?php esc_html_e($q_booking); ?>">
+                    <input type="text" class="form-control" name="q_booking" placeholder="Search Booking" required value="<?php echo esc_html($q_booking); ?>">
                     <div class="input-group-append">
                         <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i> Search</button>
                     </div>
@@ -101,10 +101,10 @@
                         $delete_url = admin_url("admin.php?page={$plugin_slug}&action=delete&id={$booking_id}");
                     ?>
                     <tr>
-                        <td><input type="checkbox" class="booking-item" value="<?php esc_html_e($booking_id); ?>"/></td>
+                        <td><input type="checkbox" class="booking-item" value="<?php echo esc_html($booking_id); ?>"/></td>
                         <?php do_action('wpcb_manage_booking_before_column_data', $booking_id); ?>
                         <td>
-                        <a class="row-title" href="<?php echo esc_url($edit_url) ?>"><?php esc_html_e(get_the_title()) ?></a>
+                        <a class="row-title" href="<?php echo esc_url($edit_url) ?>"><?php echo esc_html(get_the_title()) ?></a>
                             <div class="row-actions">
                                 <?php if($is_active_booking): ?>
                                     <span class="edit"><a href="<?php echo esc_url($edit_url) ?>"><?php esc_html_e('Edit', 'wpcb_calendar') ?></a> | </span>
@@ -115,16 +115,16 @@
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td><?php esc_html_e($meta_values[wpcb_customer_field('key')]) ?? '' ?></td>
+                        <td><?php echo esc_html($meta_values[wpcb_customer_field('key')]) ?? '' ?></td>
                         <td><?php echo $booked_dates_str; ?></td>
-                        <td><span class="status"><?php esc_html_e($meta_values['wpcb_booking_status']) ?? '' ?></span></td>
+                        <td><span class="status"><?php echo esc_html($meta_values['wpcb_booking_status']) ?? '' ?></span></td>
                         <td><?php echo get_the_date(wpcb_date_format()) ?></td>
                         <?php do_action('wpcb_manage_booking_after_column_data', $booking_id); ?>
                     </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="5"><?php esc_html_e('No Booking Found!'); ?></td>
+                        <td colspan="5"><?php esc_html_e('No Booking Found!', 'wpcb_booking'); ?></td>
                     </tr>
                 <?php endif; ?>
             </tbody>
