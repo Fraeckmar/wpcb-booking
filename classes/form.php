@@ -47,6 +47,9 @@ class WPCB_Form
         $type = array_key_exists('type', $field) ? sanitize_key($field['type']) : '';
         $key = array_key_exists('key', $field) ? sanitize_key($field['key']) : '';
         $value = array_key_exists('value', $field) ? wpcb_sanitize_data($field['value']) : '';
+        if (in_array($type, ['text', 'textarea']) && is_numeric($value) && $value <= 0) {
+            $value = '';
+        }
         $placeholder = array_key_exists('placeholder', $field) ? sanitize_text_field($field['placeholder']) : '';
         $class = array_key_exists('class', $field) ? wpcb_sanitize_data($field['class']) : '';
         $group_class = array_key_exists('group_class', $field) ? wpcb_sanitize_data($field['group_class']) : '';
@@ -56,7 +59,7 @@ class WPCB_Form
         $field_name = !empty($setting) ? $setting.'['.$key.']' : $key;
         $required = array_key_exists('required', $field) ? $field['required'] : false;
         $extras = array_key_exists('extras', $field) ? $field['extras'] : '';
-        $extras .= $required || $required == 'YES' ? 'required' : '';
+        $extras .= $required || $required == 'YES' ? ' required' : '';
         $description = array_key_exists('description', $field) ? wp_kses($field['description'], wpcb_allowed_html_tags()) : '';
 
         if(!empty($class)){
@@ -71,12 +74,12 @@ class WPCB_Form
                     $html_field .= '<label for="'.esc_html($key).'" class="form-label d-block">'.wp_kses_data($label).'</label>';
                 }  
                 if ($description) {
-                    $html_field .= '<p class="description small text-secondary mb-1">'.wp_kses_data($description).'</p>';
+                    $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
                 }
             }            
         } else {
             if ($description) {
-                $html_field .= '<p class="description small text-secondary mb-1">'.wp_kses_data($description).'</p>';
+                $html_field .= '<p class="description small text-secondary mb-1">'.$description.'</p>';
             }
         }
 

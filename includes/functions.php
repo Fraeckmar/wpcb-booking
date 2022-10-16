@@ -20,13 +20,17 @@ function wpcb_plugin_slug()
 {
     return 'manage-booking';
 }
+function wpcb_validate_number($phone_number){
+    return preg_replace('/[^0-9]/', '', $phone_number);
+}
 function wpcb_allowed_html_tags()
 {
     return array(
+        'i' => array('class' => array()),
         'br' => array('id' => array(), 'class' => array()), 
         'p' => array('id' => array(), 'class' => array()), 
         'strong' => array('id' => array(), 'class' => array()),
-        'a' => array('id' => array(), 'class' => array()),
+        'a' => array('id' => array(), 'class' => array(), 'href' => array(), 'target' => array()),
         'ul' => array('id' => array(), 'class' => array()),
         'li' => array('id' => array(), 'class' => array()),
         'ol' => array('id' => array(), 'class' => array()),

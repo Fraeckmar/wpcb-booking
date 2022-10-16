@@ -21,6 +21,7 @@ class WPCB_Booking_Asset
             wp_enqueue_style('bootstrap-datetimepicker-css', WPCB_BOOKING_PLUGIN_URL. 'assets/css/bootstrap-datetimepicker.min.css', array(), WPCB_BOOKING_VERSION);
 
             // Scripts
+            wp_enqueue_script('moment');
             wp_enqueue_script('bootstrap-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/bootstrap.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('repeater-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/repeater.min.js', array('jquery'), WPCB_BOOKING_VERSION, true);
             wp_enqueue_script('repeater-helper-js', WPCB_BOOKING_PLUGIN_URL. 'assets/js/repeater-helper.js', array('jquery'), WPCB_BOOKING_VERSION, true);

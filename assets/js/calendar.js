@@ -14,14 +14,19 @@ jQuery(document).ready(function($){
     	$('body').append(
             '<div class="wpcb-booking">'+
                 '<div class="wpcb-notif alert alert-'+type+'" role="alert">'+
-                    '<span class="fa fa-'+icon+'"></span> '+ message +
+                    '<span class="fa fa-lg fa-'+icon+'-circle"></span> '+ message +
+                    '<span class="wpcb-notif-dismiss">&times;</span>'+
                 '</div>'+
             '</div>'
         );
         setTimeout(function(){
             $('body .wpcb-notif').remove();
-        }, 5000);
+        }, 15000);
 	}
+
+    $('body').on('click', '.wpcb-notif-dismiss', function(){
+        $('body').find('.wpcb-notif').remove();
+    });
 
     window.force_hide_modal = ()=> {
         $('body').removeAttr('style');

@@ -132,10 +132,10 @@ class WPCB_Setting{
                     if (isset($_POST['wpcb_booking_status'])) {
                         update_post_meta($booking_id, 'wpcb_booking_status', wpcb_sanitize_data($_POST['wpcb_booking_status']));
                     }
-                    do_action('wpcb_after_save_booking_post', $booking_id, $_POST, $old_status);
                     $notif_action = $action == 'edit' ? 'updated' : 'added';
                     $booking_title = $booking_id ? get_the_title($booking_id) : '';
                     wpcb_set_notification("<strong>{$booking_title}</strong> {$notif_action} successfully!");
+                    do_action('wpcb_after_save_booking_post', $booking_id, $_POST, $old_status);
                 }
             }
         }

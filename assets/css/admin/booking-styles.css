@@ -80,6 +80,10 @@ body.modal-open {
 }
 
 /* Calendar LIst */
+.wpcb-booking .table.table-borderless > tbody,
+.wpcb-booking .table.table-borderless > thead{
+    border: none;
+}
 .wpcb-booking .table tbody,
 .wpcb-booking .table thead{
     border: 1px solid #cecece;

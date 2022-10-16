@@ -39,6 +39,17 @@
 	animation-name: animatetop;
 	animation-duration: 0.4s
 }
+.wpcb-notif-dismiss {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.wpcb-notif-dismiss:hover {
+    color: #fff;
+}
 
 /* Calendar */
 .calendar {
