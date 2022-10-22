@@ -104,20 +104,20 @@ class Calendar {
                     <?php for($i=$first_day_of_week; $i>0; $i--): ?>
                         <div class="day_num ignore"><?php echo esc_html($num_days_last_month-$i+1); ?></div>
                     <?php endfor; ?>
-
+                        
                     <!-- Current month days -->
                     <?php for($i=1; $i<=$num_days; $i++): ?>
                         <?php 
-                        $status = '';
+                        $status = 'available';
                         $current_date = date('Y-m-d', strtotime("{$this->active_year}-{$this->active_month}-{$i}"));
                         $day_name = date('D', strtotime($current_date));
                         $day_class = ($i == $this->active_day) ? 'current' : ''; 
+                        
                         if (!empty($calendar_data) && array_key_exists($current_date, $calendar_data) && !wpcb_allow_multiple_booking()) {
                             $status =  $calendar_data[$current_date]['status'];
-                        }                        
-                        if (empty($status)) {
-                            $status = !empty($enable_days) && !in_array($day_name, $enable_days) ? 'disabled' : 'available';
-                        }
+                        }  
+                   
+                        $status = !empty($enable_days) && !in_array($day_name, $enable_days) ? 'disabled' : $status;
                         $status = apply_filters('wpcb_calendar_status', $status, $current_date, $calendar_data, $this->booking_id);                      
                         $booked_icon_class =  $status == 'booked' ? 'd-block' : 'd-none';
                         $day_class .= " {$status}";                    
@@ -170,7 +170,7 @@ class Calendar {
                                     <?php foreach($this->get_months() as $_value => $_month): ?>
                                         <?php 
                                         $active = $_value == $this->active_month ? 'active' : ''; 
-                                        $disabled = $_value < date('m') ? 'disabled' : '';
+                                        $disabled = (int)$_value < (int)date('m') ? 'disabled' : '';
                                         ?>
                                         <div class="month item col-3 text-center <?php esc_html($active.' '.$disabled); ?>" data-value="<?php echo esc_html($_value) ?>" data-next="done" data-item="month"> <?php echo esc_html(substr($_month, 0 , 3)) ?> </div>
                                     <?php endforeach; ?>

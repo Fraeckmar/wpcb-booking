@@ -1,3 +1,13 @@
+<?php
+$width_unit = $wpcb_setting->get_setting('general', 'width_unit') ?? '%';
+$calendar_width = (int)$wpcb_setting->get_setting('general', 'width');
+if (!$calendar_width ) {
+    $calendar_width = 100;
+}
+if (empty($width_unit)) {
+    $width_unit = '%';
+}
+?>
 <div class="row">
     <?php if (!empty($general_setting_fields)): ?>
         <?php foreach ($general_setting_fields as $section_field): ?>
@@ -14,11 +24,11 @@
                         </div>
                         <div class="col-md-2">
                             <div class="input-group">
-                                <input type="number" name="general[width]" value="<?php echo esc_html($wpcb_setting->get_setting('general', 'width')); ?>" class="form-control"/> 
+                                <input type="number" name="general[width]" value="<?php echo esc_html($calendar_width); ?>" class="form-control"/> 
                                 <div class="input-group-append">
                                     <select name="general[width_unit]">
-                                        <option value="px" <?php selected($wpcb_setting->get_setting('general', 'width_unit'), 'px'); ?>><?php echo esc_html('px'); ?></option>
-                                        <option value="%" <?php selected($wpcb_setting->get_setting('general', 'width_unit'), '%'); ?>><?php echo esc_html('%'); ?></option>
+                                        <option value="px" <?php selected($width_unit, 'px'); ?>><?php echo esc_html('px'); ?></option>
+                                        <option value="%" <?php selected($width_unit, '%'); ?>><?php echo esc_html('%'); ?></option>
                                     </select>
                                 </div>
                             </div>

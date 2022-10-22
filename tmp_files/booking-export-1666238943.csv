@@ -1,0 +1,11 @@
+﻿"Booking Number","Date Created",Status,Name,Email,"Phone Number","Booked Date(s)",Amount
+BOOK7462,2022-10-08,"Pending Approval","John Doe",johndoe@gmail.com,+639053481057,2022-10-26,
+BOOK8531,2022-10-07,"Pending Approval","Jane Doe",janedoe@gmail.com,+639053481057,"2022-10-27 | 2022-10-28",
+BOOKINTTEST2,2022-10-07,Booked,"Junior Smith",smith@gmail.com,+639053481057,"2022-10-06 | 2022-10-13",
+BOOK3178,2022-10-07,"Pending Approval",Cristopher,cristopher@gmail.com,+639053481057,2022-10-31,
+BOOK1809,2022-10-07,Booked,"Lapu Lapu",lapu@gmail.com,+639053481057,"2022-10-03 | 2022-10-04",
+BOOK0208,2022-10-07,"Pending Approval",Anita,anita@gmail.com,+639053481057,2022-11-24,120.00
+BOOK3473,2022-10-07,Approved,"Juan Dela Cruz",juandelacruz@gmail.com,+639053481057,2022-10-17,220.00
+BOOK2948,2022-10-07,Booked,"Francisco Faala Maribao",franciscomaribao98@gmail.com,+639053481057,2022-11-28,220.00
+BOOK8261,2022-10-07,"Pending Approval","Francisco Faala Maribao",franciscomaribao98@gmail.com,+639053481057,,220.00
+BOOK0128,2022-10-07,Approved,"Francisco Faala Maribao",franciscomaribao98@gmail.com,+639053481057,2022-10-26,220.00

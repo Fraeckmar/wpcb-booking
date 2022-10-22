@@ -26,6 +26,7 @@ class WPCB_Setting{
         if (isset($_POST['wpcb_calendar_update_field']) && wp_verify_nonce($_POST['wpcb_calendar_update_field'], 'wpcb_calendar_update_action')) {
             $calendar_id = isset($_GET['id']) && is_numeric($_GET['id']) ? sanitize_text_field($_GET['id']) : 0;
             $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
+
             if ($action) {
                 $post_args = array(
                     'post_title' => sanitize_text_field($_POST['post_title'])
@@ -45,7 +46,7 @@ class WPCB_Setting{
                         update_post_meta($calendar_id, 'shortcode_id', get_next_shortcode_id());
                     }
                 }
-                
+
                 $form_fields = wpcb_admin_calendar_form_fields();
                 $year_month = isset($_POST['year_month']) ? sanitize_text_field($_POST['year_month']) : '';
                 if ($calendar_id) {                
@@ -57,6 +58,7 @@ class WPCB_Setting{
                                 if ($field_key == 'dates') {
                                     $_dates = wpcb_sanitize_data($_POST[$field_key]);
                                     foreach ($_dates as $_date => $_data) {
+                                        $_date = date('Y-m-d', strtotime("{$year_month}-{$_date}"));
                                         $calendar_dates[$year_month][$_date]['status'] = $_data['status'] ?? '';
                                         $calendar_dates[$year_month][$_date]['description'] = $_data['description'] ?? '';
                                     }
@@ -256,7 +258,7 @@ class WPCB_Setting{
                             'placeholder' => 'auto',
                             'class' => 'form-control',
                             'options' => array(),
-                            'value' => $this->get_setting('general', 'day_name_font_size'),
+                            'value' => $this->get_setting('general', 'day_name_font_size') ? $this->get_setting('general', 'day_name_font_size') : '',
                             'setting' => 'general',
                             'extras' => ''
                         ),
@@ -268,7 +270,7 @@ class WPCB_Setting{
                             'placeholder' => 'auto',
                             'class' => 'form-control',
                             'options' => array(),
-                            'value' => $this->get_setting('general', 'date_nos_font_size'),
+                            'value' => $this->get_setting('general', 'date_nos_font_size') ? $this->get_setting('general', 'date_nos_font_size') : '',
                             'setting' => 'general',
                             'extras' => ''
                         ),

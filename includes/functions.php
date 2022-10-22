@@ -475,6 +475,7 @@ function wpcb_get_order_details_html($booking_id)
     $booked_extras = get_post_meta($booking_id, "booked_extras", true) ?? array();
     $booked_amount = get_post_meta($booking_id, 'booked_amount', true) ?? 0;
     $booked_dates = get_post_meta($booking_id, 'booked_dates', true);
+    $extras_label = function_exists('wpcr_order_summary_extras_label') ? wpcr_order_summary_extras_label() : 'Extras';
     if (function_exists('wpcr_is_enable_payment') && wpcr_is_enable_payment()) {
         $booked_dates = array();
     }
@@ -531,7 +532,7 @@ function wpcb_get_order_details_html($booking_id)
             }  
             if (!empty($booked_extras)) {
                 $html .= "<tr>";
-                    $html .= "<td><strong>" .esc_html(wpcr_order_summary_extras_label()). "</strong></td>";
+                    $html .= "<td><strong>" .esc_html($extras_label). "</strong></td>";
                     $html .= "<td>";
                         $html .= "<ul class='bullets m-0'>";
                         foreach ($booked_extras as $label => $price) {                    

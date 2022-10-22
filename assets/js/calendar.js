@@ -110,6 +110,7 @@ jQuery(document).ready(function($){
             let goto_month = $('#go_to_date').data('month');
             let goto_date = goto_year+'-'+goto_month;
             update_calendar(goto_date, calendar_id, booking_id);
+            force_hide_modal();
         }        
     });
 

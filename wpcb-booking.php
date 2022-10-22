@@ -5,7 +5,7 @@
  * Author: <a href="https://join.skype.com/invite/yT6ad4cNTTJM">WP Booking Calendar</a>
  * Text Domain: wpcb_booking
  * Domain Path: /languages
- * Version: 3.0.0
+ * Version: 3.0.1
  */
 
  /** 
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 
 /** Defined constant */
 define('WPCB_BOOKING_TEXTDOMAIN', 'wpcb_booking');
-define('WPCB_BOOKING_VERSION', '3.0.0');
+define('WPCB_BOOKING_VERSION', '3.0.1');
 define('WPCB_BOOKING_DB_VERSION', '1.0.0');
 define('WPCB_BOOKING_FILE_DIR', __FILE__);
 define('WPCB_BOOKING_PLUGIN_URL', plugin_dir_url( WPCB_BOOKING_FILE_DIR ));

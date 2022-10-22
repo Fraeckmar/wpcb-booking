@@ -138,6 +138,22 @@ jQuery(document).ready(function($){
                                 $(this).closest('tr').remove();
                             }
                         });
+                        let no_items = booking_ids.length;
+                        let el_counter = undefined;
+                        let op_counter = undefined;
+                        if (status == 'trash') {
+                            el_counter = $('#booking-status-nav').find('.active .count');
+                            op_counter = $('#booking-status-nav').find('.trash .count');
+                        } else {
+                            el_counter = $('#booking-status-nav').find('.trash .count');
+                            op_counter = $('#booking-status-nav').find('.active .count');
+                        }
+                        let prev_count = el_counter.text().replace('(', '').replace(')', '');
+                        let op_prev_count = op_counter.text().replace('(', '').replace(')', '');
+                        let new_item_count = parseInt(prev_count) - parseInt(no_items);
+                        let new_item_count_op = parseInt(op_prev_count) + parseInt(no_items);
+                        el_counter.text('('+new_item_count+')');
+                        op_counter.text('('+new_item_count_op+')');
                     }
                     wpcb_hide_loading();
                 }
